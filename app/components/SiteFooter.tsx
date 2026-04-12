@@ -35,6 +35,16 @@ export function SiteFooter() {
                   Code source
                 </a>
               </li>
+              <li>
+                <a
+                  href="https://github.com/tonoid/sensdelamarche/issues/new"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-neutral-900"
+                >
+                  Signaler un problème
+                </a>
+              </li>
             </ul>
           </div>
           <div className="col-span-2 sm:col-span-1">
@@ -48,25 +58,38 @@ export function SiteFooter() {
             </p>
           </div>
         </div>
-        <div className="mt-8 flex flex-col gap-3 border-t border-neutral-200 pt-6 text-[12px] text-neutral-400 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            © {new Date().getFullYear()} Sens de la marche · Estimation indicative basée sur le schéma TGV Duplex le plus courant.
+        <div className="mt-8 flex flex-col gap-4 border-t border-neutral-200 pt-6 md:flex-row md:items-end md:justify-between">
+          <div className="text-center text-[12px] text-neutral-400 md:text-left">
+            © {new Date().getFullYear()} Sens de la marche · Estimation indicative basée sur le schéma TGV Duplex.
           </div>
-          <div className="text-neutral-500">
-            Développé par{" "}
-            <a
-              href="https://tonoid.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-neutral-700 hover:text-neutral-900"
-            >
-              tonoid.com
-            </a>
-            , artisan micro-startup. Fait avec{" "}
-            <span className="text-[#E5007D]" aria-label="amour">
-              ♥
-            </span>{" "}
-            à Bordeaux sur un MacBook Pro M4 Pro.
+          <div className="flex flex-col items-center gap-1 text-center md:items-end md:text-right">
+            <p className="text-[14px] text-neutral-700">
+              Fait avec un{" "}
+              <a
+                className="text-[#E5007D] underline decoration-[#E5007D]/30 underline-offset-2 hover:decoration-[#E5007D]"
+                href="https://www.refurb.me/refurbished/macbook/macbook-pro/m4-pro"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                MacBook Pro M4 Pro reconditionné
+              </a>{" "}
+              à Bordeaux{" "}
+              <span aria-label="French flag" role="img">
+                🇫🇷
+              </span>
+            </p>
+            <p className="text-[12px] text-neutral-400">
+              a{" "}
+              <a
+                className="text-[#E5007D] underline decoration-[#E5007D]/30 underline-offset-2 hover:decoration-[#E5007D]"
+                href="https://tonoid.com"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                tonoïd
+              </a>{" "}
+              microstartup © {new Date().getFullYear()}
+            </p>
           </div>
         </div>
       </div>

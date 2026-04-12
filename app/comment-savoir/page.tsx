@@ -84,7 +84,7 @@ export default function Page() {
         </section>
 
         <section className="mx-auto max-w-3xl px-4 pb-10">
-          <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
             <SeatFinder />
           </div>
         </section>

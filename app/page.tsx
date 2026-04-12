@@ -55,36 +55,36 @@ export default function Home() {
       <SiteHeader />
       <main>
         <section className="border-b border-neutral-200">
-          <div className="mx-auto max-w-5xl px-4 py-10 sm:py-14">
-            <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-              <div className="flex flex-col justify-center">
-                <p className="mb-3 text-[12px] font-semibold uppercase tracking-wider text-[#E5007D]">
+          <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12 lg:py-14">
+            <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
+              <div className="order-2 flex flex-col justify-center lg:order-1">
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[#E5007D] sm:text-[12px]">
                   Outil TGV gratuit
                 </p>
-                <h1 className="text-3xl font-bold leading-tight tracking-tight text-neutral-900 sm:text-4xl lg:text-5xl">
+                <h1 className="text-[28px] font-bold leading-[1.15] tracking-tight text-neutral-900 sm:text-4xl lg:text-5xl">
                   Mon siège TGV est-il dans le sens de la marche&nbsp;?
                 </h1>
-                <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-neutral-600">
+                <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-neutral-600 sm:text-[16px]">
                   Vérifiez en 10 secondes l&apos;orientation de votre place sur un TGV INOUI ou
                   OUIGO. Entrez votre trajet, votre voiture et votre numéro de place, le résultat
                   s&apos;affiche immédiatement.
                 </p>
-                <ul className="mt-6 space-y-2 text-[14px] text-neutral-700">
+                <ul className="mt-5 space-y-2 text-[13px] text-neutral-700 sm:mt-6 sm:text-[14px]">
                   <li className="flex items-start gap-2">
-                    <span className="mt-1 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#E5007D]" />
+                    <span className="mt-1.5 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#E5007D]" />
                     Compatible OUIGO et TGV INOUI (TGV Duplex)
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="mt-1 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#E5007D]" />
+                    <span className="mt-1.5 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#E5007D]" />
                     Tous les grands axes français couverts
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="mt-1 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#E5007D]" />
+                    <span className="mt-1.5 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#E5007D]" />
                     Gratuit, sans inscription, sans tracking
                   </li>
                 </ul>
               </div>
-              <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
+              <div className="order-1 min-w-0 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm lg:order-2">
                 <SeatFinder />
               </div>
             </div>

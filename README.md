@@ -107,20 +107,6 @@ Le site est optimisé pour l'indexation Google et la citation par les moteurs g�
 - `robots.txt` autorise explicitement GPTBot, ClaudeBot, PerplexityBot, Google-Extended et 16 autres bots IA
 - Encarts "Réponse courte" sur chaque page, format optimal pour extraction par LLM
 
-## Déploiement
-
-Push sur `main` déclenche `.github/workflows/deploy.yml` : build Next.js, puis upload vers GitHub Pages via `actions/deploy-pages@v4`.
-
-Configuration DNS (chez le registrar du domaine) :
-
-```
-A     @    185.199.108.153
-A     @    185.199.109.153
-A     @    185.199.110.153
-A     @    185.199.111.153
-CNAME www  tonoid.github.io.
-```
-
 ## Contribuer
 
 Les contributions sont bienvenues.

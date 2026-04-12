@@ -47,22 +47,22 @@ export default function Page() {
       <SiteHeader />
       <main>
         <section className="border-b border-neutral-200">
-          <div className="mx-auto max-w-5xl px-4 py-10 sm:py-14">
-            <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-              <div className="flex flex-col justify-center">
-                <p className="mb-3 text-[12px] font-semibold uppercase tracking-wider text-neutral-500">
+          <div className="mx-auto max-w-5xl px-4 py-8 sm:py-12 lg:py-14">
+            <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
+              <div className="order-2 flex flex-col justify-center lg:order-1">
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 sm:text-[12px]">
                   Voiture 1
                 </p>
-                <h1 className="text-3xl font-bold leading-tight tracking-tight text-neutral-900 sm:text-4xl">
+                <h1 className="text-[28px] font-bold leading-[1.15] tracking-tight text-neutral-900 sm:text-4xl">
                   Voiture 1 TGV : quels sièges sont dans le sens de la marche&nbsp;?
                 </h1>
-                <p className="mt-4 text-[16px] leading-relaxed text-neutral-600">
+                <p className="mt-4 text-[15px] leading-relaxed text-neutral-600 sm:text-[16px]">
                   La voiture 1 est à une extrémité du train. Son orientation dépend donc
                   directement du trajet&nbsp;: elle peut être à l&apos;avant de la rame (face à la
                   marche) ou à l&apos;arrière (dos à la marche) selon le sens de circulation.
                 </p>
               </div>
-              <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
+              <div className="order-1 min-w-0 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm lg:order-2">
                 <SeatFinder />
               </div>
             </div>

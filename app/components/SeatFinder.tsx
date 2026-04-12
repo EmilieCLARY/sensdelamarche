@@ -448,6 +448,22 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
           Basée sur l&apos;alternance par groupes de 4 sièges (schéma TGV Duplex le plus courant).
           L&apos;orientation réelle peut varier selon la rame. Vérifiez l&apos;ordre des voitures sur le quai.
         </p>
+        <a
+          href="https://github.com/tonoid/sensdelamarche/issues/new"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: "inline-block",
+            marginTop: 8,
+            fontSize: 11,
+            color: "#E5007D",
+            textDecoration: "underline",
+            textDecorationColor: "rgba(229, 0, 125, 0.3)",
+            textUnderlineOffset: 2,
+          }}
+        >
+          Résultat incorrect ? Signaler un problème
+        </a>
       </div>
     </div>
   );
