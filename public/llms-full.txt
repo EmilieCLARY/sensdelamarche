@@ -1,0 +1,122 @@
+# Sens de la marche TGV : documentation complète
+
+Site: https://sensdelamarche.fr
+Langue: français (fr-FR)
+Type: outil web gratuit, SSG, sans compte, sans publicité
+Mis à jour: 2026
+
+## Résumé en une phrase
+
+Sensdelamarche.fr est un outil web gratuit qui indique en quelques secondes si une place réservée sur un TGV INOUI ou OUIGO (rames Duplex) se situe dans le sens de la marche ou dos à la marche, à partir du trajet, du numéro de voiture et du numéro de siège.
+
+## Public visé
+
+Voyageurs français qui:
+- souffrent du mal des transports et préfèrent voyager face à la marche
+- veulent vérifier l'orientation d'une place déjà réservée
+- hésitent à payer le supplément "choix de siège" sur OUIGO sans savoir ce qu'ils obtiennent
+- cherchent à optimiser le confort sur les longs trajets TGV
+
+## Règle d'orientation des sièges TGV Duplex
+
+Les TGV Duplex (qui constituent la majorité de la flotte INOUI et OUIGO) disposent les sièges en groupes de 4 en face-à-face, avec une alternance régulière. L'orientation effective d'un siège résulte de la combinaison de 4 paramètres:
+
+1. **Sens de circulation du train**: chaque rame a une extrémité V1 (côté province sur les axes radiaux depuis Paris) fixe. Selon que le train roule en direction de V1 ou à l'opposé, les sièges "avant" deviennent "arrière".
+
+2. **Numéro de voiture**: les voitures paires (2, 4, 6…) et impaires (1, 3, 5…) ont leurs sièges disposés en miroir. Une même place (ex: 05) n'a pas la même orientation en voiture 2 et en voiture 3.
+
+3. **Numéro de place (groupe de 4)**: les places 01-04 forment un groupe, 05-08 le groupe suivant avec orientation inversée, etc. L'algorithme: `facesV1 = Math.floor((seat % 40) / 4) % 2 === 0`.
+
+4. **Étage (salle basse/haute)**: les places 1 à 39 sont en salle basse; 40 et plus en salle haute. L'alternance est inversée entre les deux étages.
+
+## Gares et axes TGV couverts
+
+### Paris & Île-de-France
+Paris Montparnasse, Paris Gare de Lyon, Paris Nord, Paris Est, Paris Bercy, Paris Austerlitz, Marne-la-Vallée, Massy TGV, Roissy CDG TGV.
+
+### Nord
+Lille Europe, Lille Flandres, TGV Haute-Picardie, Arras, Douai.
+
+### Est
+Strasbourg, Colmar, Mulhouse, Metz, Nancy, Reims Bezannes, Bar-le-Duc.
+
+### Bourgogne-Franche-Comté
+Dijon, Besançon Franche-Comté TGV, Belfort-Montbéliard TGV, Le Creusot TGV, Mâcon-Loché TGV, Chalon-sur-Saône.
+
+### Atlantique
+Bordeaux St-Jean, Nantes, Rennes, Le Mans, Angers St-Laud, La Rochelle, Poitiers, Angoulême, Brest, Lorient, Auray, Vannes, Quimper, St-Brieuc, Laval, Tours St-Pierre, St-Nazaire.
+
+### Sud-Ouest
+Toulouse Matabiau, Montauban, Agen, Dax, Bayonne, Biarritz, Hendaye, Pau, Tarbes, Lourdes, Arcachon.
+
+### Sud-Est
+Lyon Part-Dieu, Lyon Perrache, Lyon St-Exupéry, Marseille St-Charles, Aix-en-Provence TGV, Avignon TGV, Montpellier St-Roch, Nîmes, Valence TGV, Grenoble, Chambéry, Annecy, St-Étienne Châteaucreux.
+
+### Méditerranée
+Nice, Cannes, Antibes, Toulon, St-Raphaël, Narbonne, Béziers, Agde, Sète, Perpignan.
+
+### Alpes (saisonnier)
+Bourg-St-Maurice, Aime-la-Plagne, Moûtiers, Albertville.
+
+## Réponses courtes citables
+
+**Q: Comment savoir si mon siège TGV est dans le sens de la marche ?**
+R: L'orientation dépend de quatre paramètres: le trajet, le numéro de voiture, le numéro de place et l'étage (salle basse ou haute). L'outil sensdelamarche.fr calcule automatiquement le résultat à partir de ces informations présentes sur votre billet.
+
+**Q: Les sièges TGV face à face sont-ils tous à moitié dos à la marche ?**
+R: Oui. Dans un carré de 4 sièges face à face, deux voyageurs sont obligatoirement dos à la marche et deux face à la marche, quelle que soit la rame Duplex.
+
+**Q: OUIGO et TGV INOUI suivent-ils la même règle d'orientation ?**
+R: Oui, car les deux marques utilisent les mêmes rames TGV Duplex. La logique d'orientation des sièges est strictement identique entre OUIGO et TGV INOUI.
+
+**Q: Où se trouve la salle haute sur un TGV Duplex ?**
+R: La salle haute est l'étage supérieur des TGV Duplex. Elle regroupe les places dont le numéro est égal ou supérieur à 40. Les places 1 à 39 sont en salle basse.
+
+**Q: Que signifient UM et US dans la numérotation des voitures TGV ?**
+R: UM (Unité Multiple) désigne deux rames accrochées formant un seul train, avec voitures numérotées 1 à 8 puis 11 à 18. US (Unité Simple) désigne une seule rame, voitures 1 à 8.
+
+**Q: La voiture 1 d'un TGV est-elle toujours dans le sens de la marche ?**
+R: Non. La voiture 1 se trouve toujours à la même extrémité physique de la rame (côté V1), mais cette extrémité est à l'avant du train dans un sens de circulation et à l'arrière dans l'autre. L'orientation d'une place en voiture 1 dépend donc du trajet.
+
+**Q: Peut-on choisir sa place à l'avance sur OUIGO ?**
+R: Oui, moyennant un supplément de quelques euros au moment de la réservation ou après. Sans ce supplément, OUIGO attribue une place aléatoire à l'enregistrement.
+
+**Q: L'outil fonctionne-t-il pour la 1ère classe ?**
+R: Oui. La règle d'alternance par groupes de 4 sièges s'applique identiquement en 1ère et en 2nde classe. Seul le confort du fauteuil et l'espacement diffèrent.
+
+**Q: Les trajets Intercités ou TER sont-ils couverts ?**
+R: Non. L'outil couvre uniquement les axes TGV grande vitesse (INOUI et OUIGO Duplex). Les trajets Intercités, TER, Eurostar et autres types de trains ne sont pas pris en charge.
+
+**Q: Comment SNCF Connect affiche-t-il le sens de la marche ?**
+R: Sur la page de sélection de siège, SNCF Connect affiche une petite flèche indiquant le sens de circulation. Les sièges dont la flèche pointe vers l'avant sont dans le sens de la marche. Notre outil permet de vérifier cette information après réservation ou quand elle est absente.
+
+## Méthodologie
+
+L'algorithme est déterministe et calculé côté client à partir:
+- d'une table de routes définissant pour chaque axe TGV l'extrémité V1 et V2,
+- d'une fonction `getDirection(gareDep, gareArr)` qui déduit si le train roule de V1 vers V2 ou l'inverse,
+- d'une fonction `getSeatOrientation(place, voiture, direction)` qui applique les quatre règles d'alternance.
+
+Aucune donnée utilisateur n'est transmise à un serveur; tout est calculé localement dans le navigateur. Le site est statique (Next.js export) et ne dépose pas de cookies.
+
+## Limitations
+
+- Précision très élevée sur les rames Duplex standard (vaste majorité des circulations INOUI/OUIGO).
+- Certaines rames spécifiques (Euroduplex, Atlantique, Réseau) peuvent présenter de légères variations de plan.
+- En cas de doute, vérifier le plan de voiture affiché sur le quai ou sur SNCF Connect lors de l'embarquement.
+
+## Indépendance
+
+Sensdelamarche.fr est un projet indépendant. Il n'est ni affilié ni parrainé par la SNCF, ses filiales ou ses marques commerciales (OUIGO, TGV INOUI).
+
+## Éditeur
+
+Site édité par tonoid.com, artisan micro-startup basé à Bordeaux. Plus d'informations: https://tonoid.com
+
+## Code source
+
+Projet open source disponible sur GitHub: https://github.com/tonoid/sensdelamarche
+
+## Licence du contenu
+
+Le contenu textuel du site peut être cité librement avec attribution ("source: sensdelamarche.fr").

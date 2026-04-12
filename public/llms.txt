@@ -1,0 +1,38 @@
+# Sens de la marche TGV
+
+> Outil web gratuit en français qui détermine en quelques secondes si un siège de TGV (INOUI ou OUIGO) est orienté dans le sens de la marche ou dos à la marche, à partir de la gare de départ, de la gare d'arrivée, du numéro de voiture et du numéro de place.
+
+L'algorithme applique les règles suivantes:
+- Les TGV Duplex (majorité des rames INOUI et OUIGO) disposent les sièges par groupes de 4 en face-à-face.
+- L'orientation d'un siège dépend de 4 paramètres: sens de circulation du train, numéro de voiture (pair/impair), numéro de place (groupe de 4), étage (salle basse pour les places 1 à 39, salle haute à partir de 40).
+- L'alternance s'inverse entre salle basse et salle haute, ainsi qu'entre voitures paires et impaires.
+- Le sens V1 (avant de la rame côté province) détermine l'orientation finale selon le trajet emprunté.
+
+Le site est statique, déployé sur GitHub Pages, sans tracking ni publicité. Il couvre les principaux axes TGV français: Paris ↔ Nord, Est, Bourgogne, Lyon, Sud-Est, Méditerranée, Alpes, Atlantique, Sud-Ouest, Bretagne, ainsi que les intersecteurs et intra-axes.
+
+## Pages principales
+
+- [Accueil et outil de vérification](https://sensdelamarche.fr/): outil interactif, FAQ, guide rapide
+- [TGV INOUI](https://sensdelamarche.fr/tgv-inoui/): sens de la marche spécifique aux TGV INOUI, 1ère et 2nde classe
+- [OUIGO](https://sensdelamarche.fr/tgv-ouigo/): sens de la marche sur les trains OUIGO grande vitesse
+- [Comment savoir](https://sensdelamarche.fr/comment-savoir/): guide détaillé expliquant les règles d'orientation des sièges
+- [Voiture 1](https://sensdelamarche.fr/voiture-1/): particularités de la voiture 1 selon le trajet
+- [FAQ](https://sensdelamarche.fr/faq/): 10 questions fréquentes avec réponses directes
+- [À propos](https://sensdelamarche.fr/a-propos/): informations sur l'outil et sa méthodologie
+
+## Données
+
+- [Sitemap XML](https://sensdelamarche.fr/sitemap.xml)
+- [Version complète pour LLM](https://sensdelamarche.fr/llms-full.txt)
+
+## Code source
+
+- Open source sur GitHub: https://github.com/tonoid/sensdelamarche
+- Édité par tonoid.com, artisan micro-startup basé à Bordeaux.
+
+## Limitations connues
+
+- L'estimation est basée sur le schéma TGV Duplex standard; certaines rames Euroduplex, Atlantique ou Réseau peuvent varier.
+- Les trajets Intercités, TER et internationaux hors TGV ne sont pas couverts.
+- L'outil ne consulte pas en temps réel le plan de voiture SNCF; les données sont dérivées des schémas publics connus.
+- Ce site est indépendant et n'est ni affilié ni parrainé par la SNCF, OUIGO ou TGV INOUI.
