@@ -98,6 +98,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="min-h-full bg-white font-sans text-neutral-900">
         {children}
         <Script
+          defer
+          data-domain="sensdelamarche.fr"
+          data-api="https://www.tonoid.com/plsb/api/event"
+          src="https://www.tonoid.com/plsb/js/script.js"
+        />
+        <Script
           id="jsonld-website"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
