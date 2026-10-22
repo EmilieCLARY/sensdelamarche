@@ -4,6 +4,7 @@ import SeatFinder from "../components/SeatFinder";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import { AnswerBox } from "../components/AnswerBox";
+import { SITE_URL } from "@/lib/site";
 
 const UPDATED = "2026-04-12";
 
@@ -27,7 +28,7 @@ const FAQ = [
   },
   {
     q: "Les rames OUIGO sont-elles identiques aux rames INOUI ?",
-    a: "OUIGO utilise des rames TGV Duplex, souvent d'anciennes rames rénovées avec une densité plus élevée (plus de sièges, moins d'espacement). La logique d'orientation est strictement identique à INOUI.",
+    a: "Non, pas pour l'orientation. OUIGO utilise des Duplex densifiés, avec un plan et une numérotation propres : la place x40 est en salle basse sur OUIGO alors qu'elle est en salle haute sur INOUI, et les places latérales x45 et x46 des salles hautes existent chez OUIGO sans figurer sur les plans INOUI. L'outil applique donc le plan OUIGO quand vous choisissez OUIGO.",
   },
   {
     q: "Est-ce que OUIGO classique (grande vitesse) et OUIGO Train Classique ont la même logique ?",
@@ -35,7 +36,7 @@ const FAQ = [
   },
   {
     q: "Salle haute ou salle basse sur OUIGO : y a-t-il une différence ?",
-    a: "La salle haute (places à partir de 40) offre plus de luminosité et une meilleure vue. La salle basse est plus calme et plus pratique pour l'accès au bagages. L'orientation alterne entre les deux étages : si vous êtes dos à la marche en salle basse place 05, vous seriez face à la marche en salle haute place 45 de la même voiture.",
+    a: "La salle haute (places à partir de 41 sur OUIGO) offre plus de luminosité et une meilleure vue, la salle basse est plus pratique pour les bagages. En revanche, il n'y a pas d'inversion systématique entre les étages : chaque salle a ses propres ruptures (portes, escaliers, tables), et l'outil lit le plan place par place plutôt que d'appliquer une règle d'étage.",
   },
 ];
 
@@ -53,8 +54,8 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Accueil", item: "https://sensdelamarche.fr" },
-      { "@type": "ListItem", position: 2, name: "OUIGO", item: "https://sensdelamarche.fr/tgv-ouigo" },
+      { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE_URL}` },
+      { "@type": "ListItem", position: 2, name: "OUIGO", item: `${SITE_URL}/tgv-ouigo` },
     ],
   };
   const articleJsonLd = {
@@ -62,12 +63,12 @@ export default function Page() {
     "@type": "Article",
     headline: "Sens de la marche sur un OUIGO",
     description: "Orientation des sièges OUIGO (rames TGV Duplex).",
-    url: "https://sensdelamarche.fr/tgv-ouigo",
+    url: `${SITE_URL}/tgv-ouigo`,
     datePublished: "2026-04-12",
     dateModified: UPDATED,
     inLanguage: "fr-FR",
-    author: { "@id": "https://sensdelamarche.fr/#organization" },
-    publisher: { "@id": "https://sensdelamarche.fr/#organization" },
+    author: { "@id": `${SITE_URL}/#organization` },
+    publisher: { "@id": `${SITE_URL}/#organization` },
   };
 
   return (
@@ -99,12 +100,13 @@ export default function Page() {
 
         <section className="mx-auto max-w-3xl px-4 pt-10">
           <AnswerBox question="Comment savoir si mon siège OUIGO est dans le sens de la marche ?">
-            OUIGO utilise les mêmes rames TGV Duplex que TGV INOUI, donc la logique
-            d&apos;orientation est strictement identique. L&apos;orientation de votre place
-            dépend du trajet, du numéro de voiture (pair ou impair), du numéro de place
-            (groupe de 4) et de l&apos;étage (salle basse pour les places 1 à 39, salle haute
-            à partir de 40). L&apos;outil ci-dessus calcule le résultat à partir de ces
-            informations.
+            OUIGO utilise des TGV Duplex densifiés, dont le plan et la numérotation diffèrent de
+            ceux d&apos;INOUI&nbsp;: l&apos;outil applique donc le plan relevé sur
+            l&apos;option «&nbsp;Choix de la place&nbsp;» d&apos;OUIGO. Il vous donne
+            l&apos;orientation de votre place par rapport à la voiture 1, puis la règle à
+            appliquer sur le quai&nbsp;: si la voiture 1 (ou la 11 sur un train en unité multiple)
+            est côté gare d&apos;arrivée, les places tournées vers elle sont dans le sens de la
+            marche.
           </AnswerBox>
         </section>
 
@@ -122,10 +124,11 @@ export default function Page() {
               de valider votre choix.
             </p>
             <p>
-              La logique est la même que sur TGV INOUI&nbsp;: alternance par groupes de 4 sièges,
-              inversion entre salle basse et salle haute, inversion entre voitures paires et
-              impaires. Le sens de circulation du train (qui dépend du trajet) finit de déterminer
-              l&apos;orientation.
+              L&apos;orientation ne suit pas une règle arithmétique. Sur le plan relevé, elle change
+              par blocs et se casse aux portes, aux escaliers et autour des tables&nbsp;: deux
+              voitures voisines ne se déduisent pas l&apos;une de l&apos;autre, et les places
+              latérales des salles hautes (x45, x46) restent hors relevé. L&apos;outil lit donc le
+              plan place par place et s&apos;arrête quand il ne sait pas.
             </p>
           </div>
         </article>

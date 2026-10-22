@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
+import { REPO_URL, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "À propos : méthodologie et indépendance",
@@ -18,17 +19,17 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "AboutPage",
     name: "À propos de Sens de la marche",
-    url: "https://sensdelamarche.fr/a-propos",
+    url: `${SITE_URL}/a-propos`,
     inLanguage: "fr-FR",
     dateModified: UPDATED,
-    publisher: { "@id": "https://sensdelamarche.fr/#organization" },
+    publisher: { "@id": `${SITE_URL}/#organization` },
   };
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Accueil", item: "https://sensdelamarche.fr" },
-      { "@type": "ListItem", position: 2, name: "À propos", item: "https://sensdelamarche.fr/a-propos" },
+      { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE_URL}` },
+      { "@type": "ListItem", position: 2, name: "À propos", item: `${SITE_URL}/a-propos` },
     ],
   };
 
@@ -51,8 +52,8 @@ export default function Page() {
             <p className="text-[15px] leading-relaxed text-neutral-800">
               Sens de la marche est un projet indépendant qui propose un outil gratuit de
               vérification de l&apos;orientation des sièges TGV (INOUI et OUIGO, rames Duplex).
-              Le calcul est effectué localement dans le navigateur à partir de règles publiques
-              d&apos;alternance des sièges.
+              Le calcul est effectué localement dans le navigateur. C&apos;est une prévision, avec
+              un niveau de confiance affiché, pas une garantie.
             </p>
           </section>
 
@@ -69,18 +70,26 @@ export default function Page() {
           <section className="mb-10">
             <h2 className="mb-3 text-2xl font-bold tracking-tight text-neutral-900">Méthodologie</h2>
             <p className="mb-3 text-[15px] leading-relaxed text-neutral-700">
-              Le calcul applique trois règles publiques connues des schémas TGV Duplex&nbsp;:
+              Le résultat combine deux informations indépendantes&nbsp;:
             </p>
             <ol className="ml-5 list-decimal space-y-2 text-[15px] leading-relaxed text-neutral-700">
-              <li>Alternance des sièges par groupes de 4 en face-à-face tout au long de la voiture.</li>
-              <li>Inversion de l&apos;alternance entre voitures paires et voitures impaires.</li>
-              <li>Inversion de l&apos;alternance entre salle basse (places 1 à 39) et salle haute (places 40 et plus).</li>
+              <li>
+                <strong>L&apos;orientation de la place par rapport à la voiture 1.</strong> Elle vient
+                de plans d&apos;aménagement lus place par place (pour l&apos;instant TGV Duplex 2N,
+                Euroduplex, Duplex 1re génération et OUIGO) et des observations terrain. Une place absente
+                des plans donne «&nbsp;inconnu&nbsp;».
+              </li>
+              <li>
+                <strong>Le côté où se trouvera la voiture 1.</strong> Une rame TGV peut circuler
+                dans un sens ou dans l&apos;autre, donc il n&apos;est pas connu à la réservation.
+                L&apos;outil ne le prévoit qu&apos;à partir des observations d&apos;un même numéro de
+                train.
+              </li>
             </ol>
             <p className="mt-3 text-[15px] leading-relaxed text-neutral-700">
-              Le sens de circulation est déduit de la table des axes TGV français. L&apos;outil
-              identifie l&apos;extrémité V1 (avant de la rame côté province) pour chaque trajet
-              reconnu, puis combine cette information avec la règle d&apos;alternance pour
-              produire l&apos;orientation finale.
+              L&apos;outil affiche aussi la réponse conditionnelle&nbsp;: «&nbsp;si la voiture 1 est
+              côté X, ta place est dans le sens de la marche&nbsp;». Le jour du départ, la
+              composition affichée sur le quai ou dans SNCF Connect permet de trancher.
             </p>
           </section>
 
@@ -89,10 +98,10 @@ export default function Page() {
               Précision et limitations
             </h2>
             <p className="text-[15px] leading-relaxed text-neutral-700">
-              L&apos;estimation est très fiable sur les rames TGV Duplex standard, qui
-              constituent la majorité des circulations INOUI et OUIGO. Les rames Euroduplex,
-              Atlantique ou Réseau peuvent présenter des variations mineures. En cas de doute,
-              le plan de voiture affiché sur le quai ou sur SNCF Connect fait foi. Les trajets
+              Au moment de la réservation, le sens réel de la rame n&apos;est connu de personne en
+              dehors de la SNCF, et il peut être inversé le jour même. La confiance affichée est
+              donc souvent faible tant que peu d&apos;observations ont été collectées. Le plan de
+              voiture affiché sur le quai ou sur SNCF Connect fait foi. Les trajets
               Intercités, TER et internationaux hors TGV ne sont pas couverts.
             </p>
           </section>
@@ -127,15 +136,23 @@ export default function Page() {
             <p className="text-[15px] leading-relaxed text-neutral-700">
               Le code source est publié sur GitHub&nbsp;:{" "}
               <a
+                href={REPO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#E5007D] underline underline-offset-2 hover:text-[#6E1E78]"
+              >
+                {REPO_URL.replace("https://github.com/", "github.com/")}
+              </a>
+              . C&apos;est un fork de{" "}
+              <a
                 href="https://github.com/tonoid/sensdelamarche"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#E5007D] underline underline-offset-2 hover:text-[#6E1E78]"
               >
-                github.com/tonoid/sensdelamarche
+                sensdelamarche
               </a>
-              . Contributions, signalements de bugs et suggestions bienvenus via les issues du
-              dépôt. Le site est développé par{" "}
+              , créé par{" "}
               <a
                 href="https://tonoid.com"
                 target="_blank"
@@ -144,7 +161,10 @@ export default function Page() {
               >
                 tonoid.com
               </a>
-              , artisan micro-startup basé à Bordeaux.
+              &nbsp;: la reprise porte sur le modèle d&apos;orientation (plans relevés place par
+              place, observations terrain) et sur la suppression du script de mesure
+              d&apos;audience. Les signalements, les corrections de plans et les observations de
+              train passent par les issues de ce dépôt.
             </p>
           </section>
 
@@ -154,7 +174,7 @@ export default function Page() {
             </h2>
             <p className="text-[15px] leading-relaxed text-neutral-700">
               Le contenu textuel peut être cité librement avec attribution à{" "}
-              <strong>sensdelamarche.fr</strong>. Une version structurée lisible par les LLM
+              <strong>{SITE_URL.replace(/^https?:\/\//, "")}</strong>. Une version structurée lisible par les LLM
               est disponible à{" "}
               <a
                 href="/llms.txt"

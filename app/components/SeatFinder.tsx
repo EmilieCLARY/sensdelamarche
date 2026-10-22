@@ -2,14 +2,28 @@
 
 import { useMemo, useState } from "react";
 import { StationCombobox } from "./StationCombobox";
-import {
-  getDirection,
-  getParisStation,
-  getSeatOrientation,
-  isParis,
-  PARIS_ABBR,
-  TOP_CITIES,
-} from "@/lib/tgv";
+import { findTrip, getParisStation, isParis, PARIS_ABBR, TOP_CITIES } from "@/lib/tgv";
+import { estimate, parseSeat, type Confidence } from "@/lib/orientation";
+import { REPO_URL } from "@/lib/site";
+
+const CONF_LABEL: Record<Confidence, string> = {
+  aucune: "Inconnu",
+  faible: "Confiance faible",
+  moyenne: "Confiance moyenne",
+  elevee: "Confiance élevée",
+};
+
+function observationUrl(p: { train: string; dep: string; arr: string; voiture: number | null; seat: string }) {
+  const q = new URLSearchParams({
+    template: "observation.yml",
+    title: `Observation ${p.train || "train ?"} ${p.dep} → ${p.arr}`,
+    train: p.train,
+    trajet: `${p.dep} → ${p.arr}`,
+    voiture: p.voiture ? String(p.voiture) : "",
+    place: p.seat,
+  });
+  return `${REPO_URL}/issues/new?${q.toString()}`;
+}
 
 type Props = {
   defaultTrain?: "ouigo" | "inoui";
@@ -179,6 +193,7 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
   const [seatNum, setSeatNum] = useState("");
   const [dep, setDepRaw] = useState(defaultDep);
   const [arr, setArrRaw] = useState(defaultArr);
+  const [train, setTrain] = useState("");
 
   const setDep = (v: string) => {
     setDepRaw(v);
@@ -194,21 +209,18 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
   const rA = [1, 2, 3, 4, 5, 6, 7, 8];
   const rB = [11, 12, 13, 14, 15, 16, 17, 18];
 
-  const dir = useMemo(() => (dep && arr ? getDirection(dep, arr) : null), [dep, arr]);
+  const trip = useMemo(() => (dep && arr ? findTrip(dep, arr) : null), [dep, arr]);
 
-  const parsed = useMemo(() => {
-    const n = parseInt(seatNum);
-    if (isNaN(n) || n < 1) return null;
-    return n >= 100 ? { seat: n % 100, auto: true } : { seat: n, auto: false };
-  }, [seatNum]);
-
+  const parsed = useMemo(() => parseSeat(parseInt(seatNum), sel, trainType), [seatNum, sel, trainType]);
   const eSeat = parsed?.seat ?? null;
-  const upper = eSeat !== null && eSeat >= 40;
+  const upper = parsed?.upper ?? false;
 
-  const result = useMemo(() => {
-    if (!sel || !eSeat || !dir || eSeat < 1 || eSeat > 99) return null;
-    return getSeatOrientation(eSeat, sel, dir);
-  }, [sel, eSeat, dir]);
+  const est = useMemo(() => {
+    if (!sel || !parsed || !trip) return null;
+    const r = estimate({ service: trainType, dep, arr, voiture: sel, seatRaw: parseInt(seatNum), train });
+    return r.status === "ok" ? r : null;
+  }, [sel, parsed, trip, trainType, dep, arr, seatNum, train]);
+  const result = est?.result ?? null;
 
   return (
     <div
@@ -301,7 +313,7 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
         />
       </div>
 
-      {dir === null && dep && arr && (
+      {trip === null && dep && arr && (
         <div
           style={{
             padding: "12px 14px",
@@ -347,11 +359,6 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
         {doubleUnit && (
           <Rame rame={rB} label="Rame 2" selected={sel} onSelect={setSel} accent={accent} accentBg={accentBg} />
         )}
-        {dir && (
-          <div style={{ textAlign: "center", marginTop: 4, fontSize: 10, color: "#ccc", letterSpacing: 0.3 }}>
-            {dir === "a_to_b" ? "← sens de circulation ··· V1 (province) →" : "← V1 (province) ··· sens de circulation →"}
-          </div>
-        )}
       </div>
 
       <div style={{ marginBottom: 24 }}>
@@ -396,38 +403,91 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
             </span>
           )}
         </div>
-        {parsed?.auto && (
+        {parsed?.threeDigits && (
           <div style={{ fontSize: 11, color: "#bbb", marginTop: 5 }}>
             Place {String(parsed.seat).padStart(2, "0")} (numéro 3 chiffres détecté)
           </div>
         )}
       </div>
 
-      {result && (
+      <div style={{ marginBottom: 24 }}>
+        <label style={L}>N° de train (facultatif)</label>
+        <input
+          type="text"
+          inputMode="numeric"
+          value={train}
+          onChange={(e) => setTrain(e.target.value.replace(/\D/g, "").slice(0, 6))}
+          placeholder="Ex: 7012 — améliore la prévision si le train a été observé"
+          style={{
+            width: "100%",
+            padding: "12px",
+            fontSize: 16,
+            fontFamily: "'DM Sans', system-ui",
+            border: "2px solid #e5e5e5",
+            borderRadius: 10,
+            background: "#fff",
+            color: "#1a1a1a",
+            boxSizing: "border-box",
+          }}
+        />
+      </div>
+
+      {est && result && (
         <div
           style={{
             borderRadius: 14,
-            padding: "22px 16px",
-            background: result === "forward" ? "linear-gradient(135deg, #E8FAF0, #D0F0E0)" : "linear-gradient(135deg, #FFF3E0, #FFE6CC)",
+            padding: "20px 16px",
+            background:
+              result === "forward"
+                ? "linear-gradient(135deg, #E8FAF0, #D0F0E0)"
+                : result === "backward"
+                  ? "linear-gradient(135deg, #FFF3E0, #FFE6CC)"
+                  : "#f4f4f4",
             textAlign: "center",
             marginBottom: 20,
-            border: result === "forward" ? "2px solid #A8E6C3" : "2px solid #FFD49E",
+            border:
+              result === "forward" ? "2px solid #A8E6C3" : result === "backward" ? "2px solid #FFD49E" : "2px solid #e0e0e0",
           }}
         >
-          <div style={{ fontSize: 36, marginBottom: 6 }}>{result === "forward" ? "→" : "←"}</div>
+          <div style={{ fontSize: 32, marginBottom: 4 }}>
+            {result === "forward" ? "→" : result === "backward" ? "←" : "?"}
+          </div>
           <div
             style={{
               fontSize: 18,
               fontWeight: 700,
-              color: result === "forward" ? "#1B7A42" : "#B8600A",
+              color: result === "forward" ? "#1B7A42" : result === "backward" ? "#B8600A" : "#555",
               marginBottom: 4,
             }}
           >
-            {result === "forward" ? "Sens de la marche" : "Dos à la marche"}
+            {result === "forward"
+              ? "Probablement dans le sens de la marche"
+              : result === "backward"
+                ? "Probablement dos à la marche"
+                : est.ifV1Ahead
+                  ? "Ça dépend du sens de la rame"
+                  : "Place non couverte par les plans connus"}
           </div>
-          <div style={{ fontSize: 13, color: result === "forward" ? "#3DA56A" : "#D4850F" }}>
-            Voit. {sel} · Place {eSeat} · {upper ? "Salle haute" : "Salle basse"}
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#777", marginBottom: 8 }}>
+            {CONF_LABEL[est.confidence]} · Voit. {sel} · Place {seatNum} · {upper ? "Salle haute" : "Salle basse"}
           </div>
+          {est.ifV1Ahead && (
+            <div style={{ fontSize: 13, color: "#444", lineHeight: 1.5 }}>
+              Le jour J, regarde où est la voiture {sel && sel > 10 ? 11 : 1} (afficheur du quai ou composition SNCF Connect) :
+              <br />
+              voiture {sel && sel > 10 ? 11 : 1} côté <strong>{arr}</strong> →{" "}
+              {est.ifV1Ahead === "forward" ? "sens de la marche" : "dos à la marche"} ; côté <strong>{dep}</strong> →{" "}
+              {est.ifV1Ahead === "forward" ? "dos à la marche" : "sens de la marche"}.
+            </div>
+          )}
+          <details style={{ marginTop: 10, textAlign: "left", fontSize: 12, color: "#666" }}>
+            <summary style={{ cursor: "pointer" }}>Pourquoi ce résultat ?</summary>
+            <ul style={{ margin: "6px 0 0", paddingLeft: 18, lineHeight: 1.5 }}>
+              {est.reasons.map((r) => (
+                <li key={r}>{r}</li>
+              ))}
+            </ul>
+          </details>
         </div>
       )}
 
@@ -442,14 +502,16 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
             letterSpacing: 0.5,
           }}
         >
-          Estimation
+          Prévision, pas garantie
         </p>
-        <p style={{ fontSize: 12, color: "#aaa", margin: 0, lineHeight: 1.6 }}>
-          Basée sur l&apos;alternance par groupes de 4 sièges (schéma TGV Duplex le plus courant).
-          L&apos;orientation réelle peut varier selon la rame. Vérifiez l&apos;ordre des voitures sur le quai.
+        <p style={{ fontSize: 12, color: "#888", margin: 0, lineHeight: 1.6 }}>
+          L&apos;orientation de chaque place vient de plans d&apos;aménagement lus place par place (TGV
+          Duplex 2N, Euroduplex, Duplex 1re génération et OUIGO pour l&apos;instant). Le sens de la rame, lui, n&apos;est pas connu à la
+          réservation : il le devient avec les observations d&apos;un même numéro de train. Tu as pris ce
+          train ? Indique où était la voiture 1 et dans quel sens était ta place.
         </p>
         <a
-          href="https://github.com/tonoid/sensdelamarche/issues/new"
+          href={observationUrl({ train, dep, arr, voiture: sel, seat: seatNum })}
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -462,7 +524,7 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
             textUnderlineOffset: 2,
           }}
         >
-          Résultat incorrect ? Signaler un problème
+          Signaler une observation
         </a>
       </div>
     </div>

@@ -22,14 +22,35 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # next 16 demande Node >= 20.9, mais `npm test` s'appuie sur l'effacement de types
+          # (--experimental-strip-types), disponible à partir de Node 22.6 seulement.
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Tests
+        run: npm test
+
+      - name: Compute base path and site URL
+        id: site
+        run: |
+          repo="${{ github.event.repository.name }}"
+          owner="${{ github.repository_owner }}"
+          if [ "$repo" = "$owner.github.io" ]; then
+            echo "base=" >> "$GITHUB_OUTPUT"
+            echo "url=https://$owner.github.io" >> "$GITHUB_OUTPUT"
+          else
+            echo "base=/$repo" >> "$GITHUB_OUTPUT"
+            echo "url=https://$owner.github.io/$repo" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build static site
         run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.site.outputs.base }}
+          NEXT_PUBLIC_SITE_URL: ${{ steps.site.outputs.url }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

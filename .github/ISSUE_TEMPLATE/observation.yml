@@ -1,0 +1,65 @@
+name: Observation terrain
+description: Indiquer ce que tu as constaté à bord (côté de la voiture 1, sens de ta place).
+title: "Observation "
+labels: ["observation"]
+body:
+  - type: input
+    id: train
+    attributes:
+      label: Numéro de train
+      placeholder: "7012"
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: Date du trajet
+      placeholder: "2026-10-22"
+    validations:
+      required: true
+  - type: input
+    id: trajet
+    attributes:
+      label: Trajet
+      placeholder: "Lille Europe → Paris Nord"
+    validations:
+      required: true
+  - type: dropdown
+    id: v1
+    attributes:
+      label: Où était la voiture 1 ?
+      options:
+        - En tête (côté gare d'arrivée)
+        - En queue (côté gare de départ)
+        - Je ne sais pas
+    validations:
+      required: true
+  - type: dropdown
+    id: um
+    attributes:
+      label: Nombre de rames
+      options:
+        - Une rame (voitures 1 à 8)
+        - Deux rames (voitures 1 à 8 et 11 à 18)
+        - Je ne sais pas
+  - type: input
+    id: voiture
+    attributes:
+      label: Voiture
+  - type: input
+    id: place
+    attributes:
+      label: Place (tel qu'imprimé sur le billet)
+  - type: dropdown
+    id: sens
+    attributes:
+      label: Ta place était…
+      options:
+        - Dans le sens de la marche
+        - Dos à la marche
+        - Je n'ai pas noté
+  - type: textarea
+    id: notes
+    attributes:
+      label: Remarques
+      description: Type de rame si connu (Duplex, Océane, OUIGO…), étage, tout détail utile.
