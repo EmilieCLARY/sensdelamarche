@@ -464,10 +464,12 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
               ? "Probablement dans le sens de la marche"
               : result === "backward"
                 ? "Probablement dos à la marche"
-                : "Impossible à prévoir"}
+                : est.ifV1Ahead
+                  ? "Ça dépend du sens de la rame"
+                  : "Place non couverte par les plans connus"}
           </div>
           <div style={{ fontSize: 12, fontWeight: 700, color: "#777", marginBottom: 8 }}>
-            {CONF_LABEL[est.confidence]} · Voit. {sel} · Place {eSeat} · {upper ? "Salle haute" : "Salle basse"}
+            {CONF_LABEL[est.confidence]} · Voit. {sel} · Place {seatNum} · {upper ? "Salle haute" : "Salle basse"}
           </div>
           {est.ifV1Ahead && (
             <div style={{ fontSize: 13, color: "#444", lineHeight: 1.5 }}>
@@ -503,9 +505,10 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
           Prévision, pas garantie
         </p>
         <p style={{ fontSize: 12, color: "#888", margin: 0, lineHeight: 1.6 }}>
-          Personne ne connaît le sens réel de la rame au moment de la réservation : il peut être inversé.
-          La prévision s&apos;améliore avec les observations terrain. Tu as pris ce train ? Indique où était la
-          voiture 1 et dans quel sens était ta place.
+          L&apos;orientation de chaque place vient de plans d&apos;aménagement lus place par place (TGV
+          Duplex 1re génération pour l&apos;instant). Le sens de la rame, lui, n&apos;est pas connu à la
+          réservation : il le devient avec les observations d&apos;un même numéro de train. Tu as pris ce
+          train ? Indique où était la voiture 1 et dans quel sens était ta place.
         </p>
         <a
           href={observationUrl({ train, dep, arr, voiture: sel, seat: seatNum })}

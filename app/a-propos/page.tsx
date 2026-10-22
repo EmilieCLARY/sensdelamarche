@@ -74,15 +74,15 @@ export default function Page() {
             <ol className="ml-5 list-decimal space-y-2 text-[15px] leading-relaxed text-neutral-700">
               <li>
                 <strong>L&apos;orientation de la place par rapport à la voiture 1.</strong> Elle vient
-                d&apos;observations terrain quand il y en a, sinon d&apos;un modèle non vérifié
-                (carrés alternés, inversés entre étages et entre voitures paires/impaires). Les
-                voitures de 1re classe INOUI et la voiture bar ne sont pas modélisées.
+                de plans d&apos;aménagement lus place par place (pour l&apos;instant le TGV Duplex de
+                1re génération, 1re et 2nde classe) et des observations terrain. Une place absente
+                des plans donne «&nbsp;inconnu&nbsp;».
               </li>
               <li>
-                <strong>Le côté où se trouvera la voiture 1.</strong> Il vient des observations du
-                numéro de train quand il y en a, sinon de la convention supposée de l&apos;axe, dont
-                le niveau de preuve (hypothèse, témoignage, observé) est indiqué. Sur les axes
-                province-province, aucune convention n&apos;est connue.
+                <strong>Le côté où se trouvera la voiture 1.</strong> Une rame TGV peut circuler
+                dans un sens ou dans l&apos;autre, donc il n&apos;est pas connu à la réservation.
+                L&apos;outil ne le prévoit qu&apos;à partir des observations d&apos;un même numéro de
+                train.
               </li>
             </ol>
             <p className="mt-3 text-[15px] leading-relaxed text-neutral-700">

@@ -57,55 +57,27 @@ const G = {
 
 export type Route = { a: string[]; b: string[] };
 
-/**
- * Niveau de preuve du côté de la voiture 1 sur un axe.
- * - "hypothese"  : repris de l'outil d'origine, aucune source.
- * - "temoignage" : rapporté par des cheminots / passionnés, non officiel.
- * - "observe"    : confirmé par des observations terrain (voir lib/observations.ts).
- */
-export type EvidenceLevel = "hypothese" | "temoignage" | "observe";
-
-export type Axis = Route & {
-  id: string;
-  label: string;
-  /** Extrémité de l'axe où se trouve la voiture 1 selon la convention supposée, ou null si inconnue. */
-  v1End: "a" | "b" | null;
-  evidence: EvidenceLevel;
-  note: string;
-  source?: string;
-};
-
-const HYP = "Hypothèse reprise de l'outil d'origine (voiture 1 côté province), non sourcée.";
+export type Axis = Route & { id: string; label: string };
 
 export const AXES: Axis[] = [
-  {
-    id: "paris-sud-est",
-    label: "Paris Gare de Lyon ↔ Sud-Est",
-    a: [...G.paris_gdl, ...G.idf],
-    b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med, ...G.alpes],
-    v1End: "a",
-    evidence: "temoignage",
-    note:
-      "Témoignage (2011) : la 1re classe serait placée côté Paris sur l'axe Sud-Est, ce qui met la voiture 1 côté Paris. Contredit l'hypothèse de l'outil d'origine. Rame inversée « fréquemment » selon le même témoin.",
-    source: "https://www.cheminots.net/topic/26368-reservation-sens-de-la-marche/page/2/",
-  },
-  { id: "paris-atlantique", label: "Paris Montparnasse ↔ Atlantique / Sud-Ouest", a: [...G.paris_montp, ...G.idf], b: [...G.bretagne, ...G.atlantic_w, ...G.atlantic_sw, ...G.sud_ouest], v1End: "b", evidence: "hypothese", note: HYP },
-  { id: "paris-nord", label: "Paris Nord ↔ Nord", a: [...G.paris_nord, ...G.idf], b: [...G.nord], v1End: "b", evidence: "hypothese", note: HYP },
-  { id: "paris-est", label: "Paris Est ↔ Est", a: [...G.paris_est, ...G.idf], b: [...G.est], v1End: "b", evidence: "hypothese", note: HYP },
-  { id: "nord-sud-est", label: "Nord ↔ Sud-Est", a: [...G.nord], b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "nord-atlantique", label: "Nord ↔ Atlantique / Sud-Ouest", a: [...G.nord], b: [...G.bretagne, ...G.atlantic_w, ...G.atlantic_sw, ...G.sud_ouest], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "nord-est", label: "Nord ↔ Est", a: [...G.nord], b: [...G.est], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "est-sud-est", label: "Est ↔ Sud-Est", a: [...G.est], b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "sud-ouest-sud-est", label: "Bordeaux / Sud-Ouest ↔ Sud-Est", a: [...G.atlantic_sw, ...G.sud_ouest], b: [...G.lyon, ...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "ouest-sud-est", label: "Bretagne / Pays de la Loire ↔ Sud-Est", a: [...G.bretagne, ...G.atlantic_w], b: [...G.lyon, ...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "ouest-nord", label: "Bretagne / Pays de la Loire ↔ Nord", a: [...G.bretagne, ...G.atlantic_w], b: [...G.nord], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "bordeaux-sud-ouest", label: "Bordeaux ↔ Sud-Ouest", a: [...G.atlantic_sw], b: [...G.sud_ouest], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "lyon-sud-est", label: "Lyon ↔ Sud-Est / Alpes", a: [...G.lyon], b: [...G.sud_est, ...G.med, ...G.alpes], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "lyon-sud-ouest", label: "Lyon ↔ Sud-Ouest", a: [...G.lyon], b: [...G.sud_ouest], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "bourgogne-sud-est", label: "Bourgogne ↔ Sud-Est", a: [...G.bourgogne], b: [...G.lyon, ...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "ouest-sud-ouest", label: "Pays de la Loire ↔ Bordeaux / Sud-Ouest", a: [...G.atlantic_w], b: [...G.atlantic_sw, ...G.sud_ouest], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "bretagne-sud-ouest", label: "Bretagne ↔ Bordeaux / Sud-Ouest", a: [...G.bretagne], b: [...G.atlantic_sw, ...G.sud_ouest], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
-  { id: "sud-ouest-med", label: "Sud-Ouest ↔ Méditerranée", a: [...G.sud_ouest], b: [...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "paris-sud-est", label: "Paris Gare de Lyon ↔ Sud-Est", a: [...G.paris_gdl, ...G.idf], b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med, ...G.alpes] },
+  { id: "paris-atlantique", label: "Paris Montparnasse ↔ Atlantique / Sud-Ouest", a: [...G.paris_montp, ...G.idf], b: [...G.bretagne, ...G.atlantic_w, ...G.atlantic_sw, ...G.sud_ouest] },
+  { id: "paris-nord", label: "Paris Nord ↔ Nord", a: [...G.paris_nord, ...G.idf], b: [...G.nord] },
+  { id: "paris-est", label: "Paris Est ↔ Est", a: [...G.paris_est, ...G.idf], b: [...G.est] },
+  { id: "nord-sud-est", label: "Nord ↔ Sud-Est", a: [...G.nord], b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med] },
+  { id: "nord-atlantique", label: "Nord ↔ Atlantique / Sud-Ouest", a: [...G.nord], b: [...G.bretagne, ...G.atlantic_w, ...G.atlantic_sw, ...G.sud_ouest] },
+  { id: "nord-est", label: "Nord ↔ Est", a: [...G.nord], b: [...G.est] },
+  { id: "est-sud-est", label: "Est ↔ Sud-Est", a: [...G.est], b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med] },
+  { id: "sud-ouest-sud-est", label: "Bordeaux / Sud-Ouest ↔ Sud-Est", a: [...G.atlantic_sw, ...G.sud_ouest], b: [...G.lyon, ...G.sud_est, ...G.med] },
+  { id: "ouest-sud-est", label: "Bretagne / Pays de la Loire ↔ Sud-Est", a: [...G.bretagne, ...G.atlantic_w], b: [...G.lyon, ...G.sud_est, ...G.med] },
+  { id: "ouest-nord", label: "Bretagne / Pays de la Loire ↔ Nord", a: [...G.bretagne, ...G.atlantic_w], b: [...G.nord] },
+  { id: "bordeaux-sud-ouest", label: "Bordeaux ↔ Sud-Ouest", a: [...G.atlantic_sw], b: [...G.sud_ouest] },
+  { id: "lyon-sud-est", label: "Lyon ↔ Sud-Est / Alpes", a: [...G.lyon], b: [...G.sud_est, ...G.med, ...G.alpes] },
+  { id: "lyon-sud-ouest", label: "Lyon ↔ Sud-Ouest", a: [...G.lyon], b: [...G.sud_ouest] },
+  { id: "bourgogne-sud-est", label: "Bourgogne ↔ Sud-Est", a: [...G.bourgogne], b: [...G.lyon, ...G.sud_est, ...G.med] },
+  { id: "ouest-sud-ouest", label: "Pays de la Loire ↔ Bordeaux / Sud-Ouest", a: [...G.atlantic_w], b: [...G.atlantic_sw, ...G.sud_ouest] },
+  { id: "bretagne-sud-ouest", label: "Bretagne ↔ Bordeaux / Sud-Ouest", a: [...G.bretagne], b: [...G.atlantic_sw, ...G.sud_ouest] },
+  { id: "sud-ouest-med", label: "Sud-Ouest ↔ Méditerranée", a: [...G.sud_ouest], b: [...G.sud_est, ...G.med] },
 ];
 
 /** Conservé pour compatibilité (getParisStation). */

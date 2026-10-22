@@ -1,4 +1,5 @@
 import { findTrip, type Axis } from "./tgv.ts";
+import { LAYOUTS, type Layout } from "./layouts.ts";
 import {
   SEAT_OBSERVATIONS,
   TRAIN_OBSERVATIONS,
@@ -14,7 +15,7 @@ const RANK: Record<Confidence, number> = { aucune: 0, faible: 1, moyenne: 2, ele
 const minConf = (a: Confidence, b: Confidence): Confidence => (RANK[a] <= RANK[b] ? a : b);
 
 export type ParsedSeat = {
-  /** Numéro sur 2 chiffres (1-99). */
+  /** Deux derniers chiffres de la place (0-99). */
   seat: number;
   upper: boolean;
   /** Le numéro saisi était sur 3 chiffres. */
@@ -26,13 +27,12 @@ export type ParsedSeat = {
 /**
  * Lit un numéro de place. Depuis décembre 2025, les TGV INOUI utilisent 3 chiffres :
  * le premier est le chiffre des unités de la voiture (place 58 en voiture 2 ou 12 → 258).
- * Places 1-39 en salle basse, 40 et plus en salle haute.
+ * Places 0-39 en salle basse, 40 et plus en salle haute.
  */
 export function parseSeat(raw: number, voiture: number | null): ParsedSeat | null {
   if (!Number.isInteger(raw) || raw < 1 || raw > 999) return null;
   const threeDigits = raw >= 100;
   const seat = threeDigits ? raw % 100 : raw;
-  if (seat < 1) return null;
   let warning: string | undefined;
   if (threeDigits && voiture !== null && Math.floor(raw / 100) !== voiture % 10) {
     warning = `Le préfixe ${Math.floor(raw / 100)} ne correspond pas à la voiture ${voiture} : vérifie ton billet.`;
@@ -42,12 +42,21 @@ export function parseSeat(raw: number, voiture: number | null): ParsedSeat | nul
 
 type SeatFacing = { facesV1: boolean | null; confidence: Confidence; reason: string };
 
+function fromLayout(layout: Layout, voiture: number, seat: number): boolean | null {
+  const car = layout.cars[voiture > 10 ? voiture - 10 : voiture];
+  if (!car) return null;
+  if (car.toward.includes(seat)) return true;
+  if (car.away.includes(seat)) return false;
+  return null;
+}
+
 /** Orientation de la place par rapport à la voiture 1, indépendamment du sens de circulation. */
 export function seatFacesV1(
   service: Service,
   voiture: number,
   seat: ParsedSeat,
   observations: SeatObservation[] = SEAT_OBSERVATIONS,
+  layouts: Layout[] = LAYOUTS,
 ): SeatFacing {
   const obs = observations.filter(
     (o) => o.service === service && o.voiture % 10 === voiture % 10 && o.seat === seat.seat,
@@ -64,44 +73,47 @@ export function seatFacesV1(
     return {
       facesV1: yes > 0,
       confidence: "moyenne",
-      reason: `Orientation de la place observée sur le terrain (${obs.length} fois). L'aménagement peut toutefois différer d'une rame à l'autre.`,
+      reason: `Orientation de la place observée sur le terrain (${obs.length} fois).`,
     };
   }
 
-  const unit = voiture % 10;
-  if (service === "inoui" && unit >= 1 && unit <= 3) {
+  const known = layouts
+    .filter((l) => l.services.includes(service))
+    .map((l) => ({ l, v: fromLayout(l, voiture, seat.seat) }))
+    .filter((x): x is { l: Layout; v: boolean } => x.v !== null);
+
+  if (known.length === 0) {
     return {
       facesV1: null,
       confidence: "aucune",
       reason:
-        "Voiture de 1re classe : rangées de 3 sièges (2+1) et, sur les rames Océane, sièges pivotés au terminus. Le modèle ne s'applique pas.",
+        service === "ouigo"
+          ? "Aucun plan d'aménagement OUIGO vérifié pour l'instant."
+          : "Cette place ne figure dans aucun plan d'aménagement vérifié.",
     };
   }
-  if (service === "inoui" && unit === 4) {
+  const values = new Set(known.map((k) => k.v));
+  if (values.size > 1) {
     return {
       facesV1: null,
       confidence: "aucune",
-      reason: "Voiture bar : aménagement particulier, non modélisé.",
+      reason: `L'orientation dépend du type de rame (${known.map((k) => k.l.label).join(", ")}).`,
     };
   }
-
-  // Modèle non vérifié : carrés de 4 places alternés à chaque rangée (2+2),
-  // inversés en salle haute et entre voitures paires/impaires.
-  const idx = seat.upper ? seat.seat - 40 : seat.seat - 1;
-  let facesV1 = Math.floor(idx / 4) % 2 === 0;
-  if (seat.upper) facesV1 = !facesV1;
-  if (unit % 2 === 0) facesV1 = !facesV1;
+  const labels = known.map((k) => k.l.label).join(", ");
   return {
-    facesV1,
-    confidence: "faible",
-    reason:
-      "Orientation de la place estimée par un modèle non vérifié (carrés alternés). Les Duplex récents ont surtout des sièges en rangées « avion » : le modèle peut être faux.",
+    facesV1: known[0].v,
+    confidence: "moyenne",
+    reason: `Selon le plan du ${labels}. Si ta rame est d'un autre type (Euroduplex, Océane…), l'orientation peut différer.`,
   };
 }
 
 type V1Prediction = { v1End: "a" | "b" | null; confidence: Confidence; reason: string };
 
-/** Côté où se trouvera la voiture 1, d'après les observations du train puis la convention de l'axe. */
+/**
+ * Côté où se trouvera la voiture 1. Sur TGV Duplex, la rame peut circuler dans un sens
+ * ou dans l'autre : seules les observations d'un même numéro de train permettent une prévision.
+ */
 export function predictV1End(
   axis: Axis,
   train: string | undefined,
@@ -124,13 +136,12 @@ export function predictV1End(
       };
     }
   }
-  if (axis.v1End === null) {
-    return { v1End: null, confidence: "aucune", reason: `${axis.label} : ${axis.note}` };
-  }
   return {
-    v1End: axis.v1End,
-    confidence: "faible",
-    reason: `${axis.label} : ${axis.note}${num ? ` Aucune observation pour le train ${num}.` : ""}`,
+    v1End: null,
+    confidence: "aucune",
+    reason: `Une rame TGV peut circuler dans un sens ou dans l'autre : sans observation${
+      num ? ` du train ${num}` : " de ce train"
+    }, on ne peut pas savoir à l'avance de quel côté sera la voiture 1.`,
   };
 }
 
@@ -159,7 +170,7 @@ export type Estimate =
 
 export function estimate(
   input: EstimateInput,
-  data: { trains?: TrainObservation[]; seats?: SeatObservation[] } = {},
+  data: { trains?: TrainObservation[]; seats?: SeatObservation[]; layouts?: Layout[] } = {},
 ): Estimate {
   const trip = findTrip(input.dep, input.arr);
   if (!trip) return { status: "trajet-inconnu" };
@@ -169,13 +180,10 @@ export function estimate(
   const reasons: string[] = [];
   if (seat.warning) reasons.push(seat.warning);
 
-  const sf = seatFacesV1(input.service, input.voiture, seat, data.seats);
+  const sf = seatFacesV1(input.service, input.voiture, seat, data.seats, data.layouts);
   reasons.push(sf.reason);
   const v1 = predictV1End(trip.axis, input.train, data.trains);
   reasons.push(v1.reason);
-  if (input.voiture > 10) {
-    reasons.push("Voitures 11 à 18 : on suppose la 2e rame orientée comme la 1re, ce qui n'est pas garanti.");
-  }
 
   const ifV1Ahead: Facing | null = sf.facesV1 === null ? null : sf.facesV1 ? "forward" : "backward";
   if (sf.facesV1 === null || v1.v1End === null) {

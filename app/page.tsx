@@ -12,7 +12,7 @@ const FAQ = [
   },
   {
     q: "Le calcul est-il fiable à 100 % ?",
-    a: "Non. Au moment de la réservation, personne ne connaît le sens réel de la rame : il peut être inversé. L'outil donne une prévision avec un niveau de confiance (souvent faible pour l'instant), et la réponse à appliquer le jour J selon le côté où se trouve la voiture 1. La prévision s'améliore avec les observations terrain.",
+    a: "Non. Au moment de la réservation, personne ne connaît le sens réel de la rame : il peut être inversé. L'outil indique l'orientation de ta place par rapport à la voiture 1 (d'après des plans d'aménagement), donc la réponse à appliquer le jour J selon le côté où se trouve la voiture 1. Il ne prévoit le sens de la rame que si ce train a déjà été observé.",
   },
   {
     q: "Ça marche pour OUIGO et TGV INOUI ?",
@@ -20,7 +20,7 @@ const FAQ = [
   },
   {
     q: "Et les places de 1ère classe ?",
-    a: "Pas encore. En 1re classe INOUI (voitures 1 à 3 et 11 à 13), les rangées sont de 3 sièges et certaines rames ont des sièges pivotés au terminus : l'outil répond « impossible à prévoir » plutôt que d'inventer.",
+    a: "Oui pour les TGV Duplex de 1re génération, dont le plan de 1re classe a été relevé. Sur les rames Océane, les sièges de 1re pivotent au terminus pour faire face au sens de la marche (sauf en bout de voiture).",
   },
   {
     q: "Pourquoi certains trajets ne sont pas reconnus ?",
