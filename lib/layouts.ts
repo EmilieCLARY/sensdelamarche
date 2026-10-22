@@ -1,8 +1,13 @@
 /**
  * Plans d'aménagement : orientation de chaque place par rapport à la voiture 1.
  * Les numéros sont la place moins le préfixe de voiture (258 en voiture 2 → 58 ; 904 en voiture 8 → 104).
- * Les voitures 11 à 18 reprennent le plan des voitures 1 à 8.
+ * Les voitures 11 à 18 reprennent le plan des voitures 1 à 8, par symétrie : cette
+ * hypothèse n'a pas été vérifiée sur le terrain (les rames d'une UM sont accouplées
+ * bout à bout, l'ordre des voitures y court à l'envers de celui de la rame 1).
+ * La valeur 0 apparaît dans les plans pour une place imprimée x00 : à confirmer, car
+ * parseSeat(100) la ramène à 0 et la place 100 n'est pas documentée par les sources.
  * Sur les deux plans, la voiture 1 est à gauche ; le côté du dossier de chaque siège a été lu à la main.
+ * Sources non archivées dans le dépôt : toute modification doit citer le plan utilisé.
  */
 
 export type CarLayout = {

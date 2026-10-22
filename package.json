@@ -5,9 +5,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tonoid/sensdelamarche.git"
+    "url": "https://github.com/EmilieCLARY/sensdelamarche.git"
   },
-  "homepage": "https://sensdelamarche.fr",
+  "engines": {
+    "node": ">=22.6"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

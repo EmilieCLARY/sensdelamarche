@@ -75,13 +75,14 @@ export function seatFacesV1(
     }
     return {
       facesV1: yes > 0,
-      confidence: "moyenne",
+      // Deux relevés concordants valent mieux qu'un plan : ils portent sur une rame réelle.
+      confidence: obs.length >= 2 ? "elevee" : "moyenne",
       reason: `Orientation de la place observée sur le terrain (${obs.length} fois).`,
     };
   }
 
-  const known = layouts
-    .filter((l) => l.services.includes(service))
+  const serviceLayouts = layouts.filter((l) => l.services.includes(service));
+  const known = serviceLayouts
     .map((l) => ({ l, v: fromLayout(l, voiture, seat.seat) }))
     .filter((x): x is { l: Layout; v: boolean } => x.v !== null);
 
@@ -101,10 +102,19 @@ export function seatFacesV1(
     };
   }
   const labels = known.map((k) => k.l.label).join(", ");
+  const uncovered = serviceLayouts.filter((l) => !known.some((k) => k.l.id === l.id));
+  const missing =
+    uncovered.length > 0
+      ? ` Le plan « ${uncovered.map((l) => l.label).join(", ")} » ne relève pas cette place : sur une rame de ce type, son orientation n'est pas confirmée.`
+      : "";
+  const rame2 =
+    voiture > 10
+      ? " Voitures 11 à 18 : plan de la rame 2 appliqué par symétrie, non vérifié sur le terrain."
+      : "";
   return {
     facesV1: known[0].v,
     confidence: "moyenne",
-    reason: `${known.length > 1 ? "Les plans concordent" : "Selon le plan"} : ${labels}. Sur une rame d'un autre type (Océane, TGV M…), l'orientation peut différer.`,
+    reason: `${known.length > 1 ? "Les plans concordent" : "Selon le plan"} : ${labels}. Sur une rame d'un autre type (Océane, TGV M…), l'orientation peut différer.${missing}${rame2}`,
   };
 }
 
@@ -124,7 +134,14 @@ export function predictV1End(
     const obs = observations.filter((o) => o.train === num && o.axis === axis.id);
     if (obs.length > 0) {
       const a = obs.filter((o) => o.v1End === "a").length;
-      const end = a * 2 >= obs.length ? "a" : "b";
+      if (a * 2 === obs.length) {
+        return {
+          v1End: null,
+          confidence: "aucune",
+          reason: `Train ${num} : ${a} observations d'un côté de l'axe, ${obs.length - a} de l'autre. Impossible de trancher sans nouveaux relevés.`,
+        };
+      }
+      const end = a * 2 > obs.length ? "a" : "b";
       const share = Math.max(a, obs.length - a) / obs.length;
       const pct = Math.round(share * 100);
       const confidence: Confidence =

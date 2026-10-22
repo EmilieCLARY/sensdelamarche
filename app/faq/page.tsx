@@ -3,6 +3,7 @@ import Script from "next/script";
 import Link from "next/link";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "FAQ : sens de la marche TGV",
@@ -19,7 +20,7 @@ const FAQ = [
   },
   {
     q: "L'outil fonctionne-t-il pour les TGV INOUI et OUIGO ?",
-    a: "Oui. Les deux utilisent la même plateforme TGV Duplex, donc la logique d'orientation est identique.",
+    a: "Oui, mais avec deux plans distincts : les Duplex densifiés d'OUIGO n'ont pas la même numérotation que ceux d'INOUI (la place x40 est en salle basse chez OUIGO, en salle haute chez INOUI). Les rames Océane, Atlantique/Réseau et TGV M ne sont pas encore relevées : l'outil l'indique au lieu de deviner.",
   },
   {
     q: "Le résultat est-il fiable à 100 % ?",
@@ -31,7 +32,7 @@ const FAQ = [
   },
   {
     q: "Quelle différence entre salle haute et salle basse sur un TGV Duplex ?",
-    a: "Les TGV Duplex ont deux étages. La salle basse regroupe les places 01 à 39 environ ; la salle haute, à partir de 40. L'orientation des sièges est inversée entre les deux étages.",
+    a: "Ce sont les deux étages d'une rame Duplex. La salle basse va jusqu'à la place 39 (40 exclu sur OUIGO), la salle haute au-delà. Attention : les deux étages n'ont pas d'orientation systématiquement inversée. L'outil lit le plan place par place, salle par salle.",
   },
   {
     q: "Que signifie UM et US dans l'outil ?",
@@ -39,7 +40,7 @@ const FAQ = [
   },
   {
     q: "Les carrés (sièges en face-à-face) sont-ils tous obligatoirement à moitié dos à la marche ?",
-    a: "Oui. Dans un carré de 4 sièges face à face, deux personnes voyagent forcément dos à la marche. Si vous voyagez seul et souhaitez éviter cette disposition, choisissez une rangée non-carré (groupes de 2 côte-à-côte orientés dans le même sens).",
+    a: "Dans un carré de quatre sièges face à face, deux voyageurs regardent dans un sens et deux dans l'autre. En revanche, il n'existe pas de « rangée non-carré » à choisir pour l'éviter : en Duplex 2nde classe, l'essentiel des places est en face-à-face, et les blocs de sièges ne s'alternent pas régulièrement. Le seul moyen fiable est de vérifier le plan de la place, voiture par voiture.",
   },
   {
     q: "Comment choisir sa place dans le sens de la marche sur SNCF Connect ?",
@@ -69,8 +70,8 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Accueil", item: "https://sensdelamarche.fr" },
-      { "@type": "ListItem", position: 2, name: "FAQ", item: "https://sensdelamarche.fr/faq" },
+      { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE_URL}` },
+      { "@type": "ListItem", position: 2, name: "FAQ", item: `${SITE_URL}/faq` },
     ],
   };
 

@@ -8,7 +8,7 @@ import { AnswerBox } from "./components/AnswerBox";
 const FAQ = [
   {
     q: "Comment savoir si mon siège TGV est dans le sens de la marche ?",
-    a: "Entrez votre gare de départ, votre gare d'arrivée, le numéro de voiture et le numéro de place. L'outil indique immédiatement si vous voyagez face à la marche ou dos à la marche.",
+    a: "Entrez votre gare de départ, votre gare d'arrivée, le numéro de voiture et le numéro de place. L'outil indique l'orientation de votre place par rapport à la voiture 1, puis la règle à appliquer sur le quai : si la voiture 1 est côté gare d'arrivée, les places tournées vers elle sont dans le sens de la marche.",
   },
   {
     q: "Le calcul est-il fiable à 100 % ?",
@@ -16,7 +16,7 @@ const FAQ = [
   },
   {
     q: "Ça marche pour OUIGO et TGV INOUI ?",
-    a: "Oui. Les deux utilisent la même plateforme TGV Duplex, donc la logique d'orientation est identique. Sélectionnez simplement OUIGO ou INOUI en haut de l'outil.",
+    a: "Oui, mais avec deux plans distincts : les Duplex densifiés d'OUIGO n'ont pas la même numérotation que ceux d'INOUI (la place x40 est en salle basse chez OUIGO, en salle haute chez INOUI). Sélectionnez OUIGO ou INOUI en haut de l'outil, le plan correspondant est appliqué.",
   },
   {
     q: "Et les places de 1ère classe ?",
@@ -93,12 +93,13 @@ export default function Home() {
 
         <section className="mx-auto max-w-3xl px-4 pt-10">
           <AnswerBox question="Comment savoir si mon siège TGV est dans le sens de la marche ?">
-            L&apos;orientation d&apos;une place TGV (INOUI ou OUIGO, rames Duplex) se détermine
-            avec quatre informations&nbsp;: le trajet (gares de départ et d&apos;arrivée), le
-            numéro de voiture (pair ou impair), le numéro de place et l&apos;étage (salle
-            basse pour les places 1 à 39, salle haute à partir de 40). Les sièges sont
-            disposés par groupes de 4 en face-à-face, avec une alternance qui s&apos;inverse
-            entre voitures paires et impaires, et entre salle basse et salle haute.
+            Deux informations, que l&apos;outil ne mélange pas. D&apos;abord l&apos;orientation
+            de votre place par rapport à la voiture 1&nbsp;: elle est relevée place par place
+            sur le plan du type de rame, à partir du numéro de voiture et de place. Ensuite le
+            côté où se trouvera la voiture 1, qui n&apos;est pas connu à la réservation&nbsp;:
+            le jour du départ, si elle est côté gare d&apos;arrivée, les places tournées vers
+            elle sont dans le sens de la marche. Sans observation de votre train, l&apos;outil
+            affiche cette règle au lieu de deviner.
           </AnswerBox>
         </section>
 
@@ -109,16 +110,17 @@ export default function Home() {
           <div className="space-y-4 text-[15px] leading-relaxed text-neutral-700">
             <p>
               Voyager dos à la marche peut gâcher un long trajet, surtout pour les personnes
-              sensibles au mal des transports. Sur un TGV Duplex (la majorité des rames INOUI et
-              OUIGO), les sièges sont disposés par groupes de 4 en face-à-face, ce qui veut dire que
-              la moitié des places voyagent forcément dos à la marche. Savoir à l&apos;avance de
-              quel côté vous serez permet de choisir sereinement lors de la réservation.
+              sensibles au mal des transports. Sur un TGV Duplex, les sièges sont très souvent en
+              face-à-face&nbsp;: une partie des places est donc forcément dos à la marche, mais
+              on ne peut pas la déduire d&apos;une règle simple. Les plans réels changent
+              d&apos;orientation par blocs irréguliers, avec des ruptures autour des portes, des
+              escaliers et du bar.
             </p>
             <p>
-              L&apos;orientation d&apos;une place dépend de trois choses&nbsp;: le trajet (dans quel
-              sens roule le train), la voiture (numéro pair ou impair), et le numéro de siège
-              (groupe de 4 auquel il appartient, salle basse ou haute). Notre outil combine ces
-              trois paramètres pour donner une réponse immédiate.
+              L&apos;outil d&apos;origine appliquait justement cette règle simple — des carrés
+              alternés par groupes de 4, et un sens de rame déduit du trajet — sans source. Le
+              modèle actuel part des plans relevés place par place, et ne prévoit le côté de la
+              voiture 1 que si ce train a été observé.
             </p>
           </div>
         </section>

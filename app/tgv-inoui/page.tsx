@@ -4,6 +4,7 @@ import SeatFinder from "../components/SeatFinder";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import { AnswerBox } from "../components/AnswerBox";
+import { SITE_URL } from "@/lib/site";
 
 const UPDATED = "2026-04-12";
 
@@ -23,11 +24,11 @@ export const metadata: Metadata = {
 const FAQ = [
   {
     q: "Toutes les rames TGV INOUI ont-elles la même disposition ?",
-    a: "La majorité des TGV INOUI utilisent des rames Duplex (deux étages). Certaines relations circulent en rames Atlantique ou Réseau, à un seul niveau : la logique d'alternance reste valable, mais les numéros de salle haute/basse n'existent pas.",
+    a: "Non. Une majorité de TGV INOUI circulent en rames Duplex (deux étages), mais les plans diffèrent entre Duplex 2N/Euroduplex et Duplex 1re génération, et les rames Océane, Atlantique/Réseau ou TGV M ne sont pas encore relevées. Quand les deux plans Duplex divergent pour une place, l'outil répond « dépend du type de rame » au lieu de choisir.",
   },
   {
     q: "Les sièges en carré (face à face) sont-ils forcément à moitié dos à la marche ?",
-    a: "Oui. Dans un carré de 4 sièges face à face, deux voyageurs sont forcément dos à la marche. Si vous voyagez seul et préférez éviter, choisissez un siège dans une rangée non-carré (groupes de 2 côte-à-côte).",
+    a: "Dans un carré de quatre sièges face à face, deux personnes regardent dans un sens et deux dans l'autre, oui. Mais cela ne suffit pas à prédire votre place : sur un plan réel, les sièges ne s'alternent pas régulièrement par groupes de 2 ou de 4, et les ruptures (portes, escaliers, bar, salons d'extrémité) cassent toute règle arithmétique. C'est pourquoi l'outil part des plans relevés place par place, et non d'une formule.",
   },
   {
     q: "Comment choisir sa place dans le sens de la marche en réservant sur SNCF Connect ?",
@@ -49,8 +50,8 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Accueil", item: "https://sensdelamarche.fr" },
-      { "@type": "ListItem", position: 2, name: "TGV INOUI", item: "https://sensdelamarche.fr/tgv-inoui" },
+      { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE_URL}` },
+      { "@type": "ListItem", position: 2, name: "TGV INOUI", item: `${SITE_URL}/tgv-inoui` },
     ],
   };
   const articleJsonLd = {
@@ -59,12 +60,12 @@ export default function Page() {
     headline: "Sens de la marche sur un TGV INOUI",
     description:
       "Savoir si votre siège TGV INOUI est dans le sens de la marche.",
-    url: "https://sensdelamarche.fr/tgv-inoui",
+    url: `${SITE_URL}/tgv-inoui`,
     datePublished: "2026-04-12",
     dateModified: UPDATED,
     inLanguage: "fr-FR",
-    author: { "@id": "https://sensdelamarche.fr/#organization" },
-    publisher: { "@id": "https://sensdelamarche.fr/#organization" },
+    author: { "@id": `${SITE_URL}/#organization` },
+    publisher: { "@id": `${SITE_URL}/#organization` },
   };
 
   return (
@@ -96,11 +97,13 @@ export default function Page() {
 
         <section className="mx-auto max-w-3xl px-4 pt-10">
           <AnswerBox question="Comment savoir si mon siège TGV INOUI est dans le sens de la marche ?">
-            L&apos;orientation d&apos;un siège TGV INOUI dépend de quatre paramètres&nbsp;:
-            le trajet (qui fixe le sens de circulation), le numéro de voiture (pair ou
-            impair), le numéro de place (groupe de 4) et l&apos;étage (salle basse jusqu&apos;à
-            la place 39, salle haute à partir de 40). L&apos;outil ci-dessus combine ces
-            quatre paramètres et donne le résultat immédiatement.
+            En deux temps. L&apos;orientation de votre place par rapport à la voiture 1 se lit sur
+            le plan d&apos;aménagement du type de rame (Duplex 2N, Euroduplex, Duplex 1re
+            génération)&nbsp;: l&apos;outil ci-dessus la donne dès le numéro de voiture et de
+            place, y compris pour les numéros à trois chiffres utilisés depuis décembre 2025.
+            Reste le côté où sera la voiture 1, que la réservation ne dit pas&nbsp;: il se lit sur
+            l&apos;afficheur du quai le jour du départ. Si la voiture 1 est côté gare
+            d&apos;arrivée, les places tournées vers elle sont dans le sens de la marche.
           </AnswerBox>
         </section>
 
@@ -111,22 +114,25 @@ export default function Page() {
           <div className="space-y-4 text-[15px] leading-relaxed text-neutral-700">
             <p>
               Les TGV INOUI circulent principalement en rames <strong>Duplex</strong> à deux étages
-              (salle basse et salle haute). Les sièges sont installés par groupes de 4 en
-              face-à-face&nbsp;: deux voyageurs dans le sens de la marche, deux dos à la marche.
-              Cette alternance se répète tout au long de la voiture, et s&apos;inverse entre salle
-              basse et salle haute, entre voitures paires et impaires.
+              (salle basse et salle haute). Il n&apos;existe pas de règle unique du type «&nbsp;un
+              siège sur deux&nbsp;» ou «&nbsp;inversion entre les étages&nbsp;»&nbsp;: sur un plan
+              réel, l&apos;orientation change par blocs, avec des ruptures autour des portes, des
+              escaliers et du bar. C&apos;est pour cela que le modèle lit les plans place par place
+              au lieu de calculer une alternance.
             </p>
-            <p>
-              Concrètement, le sens de votre siège dépend donc de&nbsp;:
-            </p>
+            <p>Ce dont dépend le résultat&nbsp;:</p>
             <ul className="ml-5 list-disc space-y-1 text-neutral-700">
-              <li>le sens de circulation du train (lié aux gares de départ et d&apos;arrivée)&nbsp;;</li>
-              <li>le numéro de voiture (pair ou impair)&nbsp;;</li>
-              <li>le numéro de place et sa position dans le groupe de 4&nbsp;;</li>
-              <li>l&apos;étage (salle basse jusqu&apos;à 39, salle haute à partir de 40).</li>
+              <li>le type de rame, qui détermine le plan (les deux générations de Duplex divergent
+                sur quelques places de la voiture 1&nbsp;: l&apos;outil le dit) ;</li>
+              <li>le numéro de voiture, ou plus exactement le numéro de voiture dans sa rame
+                (les voitures 11 à 18 reprennent le plan des voitures 1 à 8) ;</li>
+              <li>le numéro de place, préfixe de voiture compris&nbsp;;</li>
+              <li>le côté de la voiture 1 ce jour-là, qui vient des observations de terrain et non
+                du plan.</li>
             </ul>
             <p>
-              Notre outil combine ces quatre paramètres et vous donne le résultat immédiatement.
+              Tant qu&apos;aucune observation n&apos;existe pour votre numéro de train, l&apos;outil
+              ne vous donne pas un sens, mais la règle à appliquer sur le quai.
             </p>
           </div>
         </article>
@@ -137,10 +143,11 @@ export default function Page() {
               TGV INOUI 1ère classe : orientation des sièges
             </h2>
             <p className="text-[15px] leading-relaxed text-neutral-700">
-              En 1ère classe (voitures 1 à 3 selon les rames), la logique est identique&nbsp;:
-              sièges par groupes de 4 avec deux face à la marche et deux dos. Le confort est
-              supérieur (fauteuil plus large, plus d&apos;espace) mais cela ne change pas
-              l&apos;orientation. L&apos;outil fonctionne pareil pour la 1ère et la 2nde classe.
+              En 1ère classe (voitures 1 à 3 selon les rames), l&apos;orientation se lit aussi sur
+              le plan&nbsp;: aucune règle d&apos;étage ne s&apos;y applique. Attention aux places
+              PMR et aux salons d&apos;extrémité, où les deux générations de Duplex ne concordent
+              pas&nbsp;; l&apos;outil affiche alors «&nbsp;dépend du type de rame&nbsp;» plutôt
+              qu&apos;une réponse fausse.
             </p>
           </div>
         </section>

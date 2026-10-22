@@ -1,38 +1,44 @@
 # Sens de la marche TGV
 
-> Outil web gratuit en français qui détermine en quelques secondes si un siège de TGV (INOUI ou OUIGO) est orienté dans le sens de la marche ou dos à la marche, à partir de la gare de départ, de la gare d'arrivée, du numéro de voiture et du numéro de place.
+> Outil web gratuit en français qui indique l'orientation d'une place de TGV (INOUI ou OUIGO) par rapport à la voiture 1, puis la règle à appliquer le jour du départ selon le côté où se trouve cette voiture.
 
-L'algorithme applique les règles suivantes:
-- Les TGV Duplex (majorité des rames INOUI et OUIGO) disposent les sièges par groupes de 4 en face-à-face.
-- L'orientation d'un siège dépend de 4 paramètres: sens de circulation du train, numéro de voiture (pair/impair), numéro de place (groupe de 4), étage (salle basse pour les places 1 à 39, salle haute à partir de 40).
-- L'alternance s'inverse entre salle basse et salle haute, ainsi qu'entre voitures paires et impaires.
-- Le sens V1 (avant de la rame côté province) détermine l'orientation finale selon le trajet emprunté.
+Le modèle combine deux données indépendantes:
+
+- L'orientation de chaque place par rapport à la voiture 1, relevée place par place sur de vrais plans d'aménagement (Duplex 2N/Euroduplex, Duplex 1re génération, OUIGO densifié). Les places sont classées en deux listes par voiture: celles qui regardent vers la voiture 1 et celles qui lui tournent le dos. Aucune règle d'alternance n'est appliquée: les plans réels ne suivent pas de motif régulier par groupes de 4, paires/impaires ou étages.
+- Le côté où se trouve la voiture 1 le jour du départ, qui n'est pas connu à la réservation: une rame Duplex peut circuler dans les deux sens et la SNCF ne garantit pas l'ordre des voitures. Il n'est prévu que si le même numéro de train a été observé sur le terrain (lib/observations.ts).
+
+Conséquence à retenir: sans observation du train, l'outil ne répond pas «sens de la marche» ou «dos à la marche». Il donne la règle: si la voiture 1 (ou la 11 sur une unité multiple) est côté gare d'arrivée, les places tournées vers elle sont dans le sens de la marche; sinon, l'inverse.
+
+Numérotation: depuis décembre 2025, les places sont numérotées sur 3 chiffres, le premier étant le chiffre des unités de la voiture (258 = voiture 2 ou 12, place 58; 904 = voiture 8 OUIGO, place 104).
 
 Le site est statique, déployé sur GitHub Pages, sans tracking ni publicité. Il couvre les principaux axes TGV français: Paris ↔ Nord, Est, Bourgogne, Lyon, Sud-Est, Méditerranée, Alpes, Atlantique, Sud-Ouest, Bretagne, ainsi que les intersecteurs et intra-axes.
 
 ## Pages principales
 
-- [Accueil et outil de vérification](https://sensdelamarche.fr/): outil interactif, FAQ, guide rapide
-- [TGV INOUI](https://sensdelamarche.fr/tgv-inoui/): sens de la marche spécifique aux TGV INOUI, 1ère et 2nde classe
-- [OUIGO](https://sensdelamarche.fr/tgv-ouigo/): sens de la marche sur les trains OUIGO grande vitesse
-- [Comment savoir](https://sensdelamarche.fr/comment-savoir/): guide détaillé expliquant les règles d'orientation des sièges
-- [Voiture 1](https://sensdelamarche.fr/voiture-1/): particularités de la voiture 1 selon le trajet
-- [FAQ](https://sensdelamarche.fr/faq/): 10 questions fréquentes avec réponses directes
-- [À propos](https://sensdelamarche.fr/a-propos/): informations sur l'outil et sa méthodologie
+- [Accueil et outil de vérification](https://emilieclary.github.io/sensdelamarche/): outil interactif, FAQ, guide rapide
+- [TGV INOUI](https://emilieclary.github.io/sensdelamarche/tgv-inoui/): orientation des places sur les rames Duplex INOUI, 1ère et 2nde classe
+- [OUIGO](https://emilieclary.github.io/sensdelamarche/tgv-ouigo/): orientation des places sur les OUIGO grande vitesse (Duplex densifiés)
+- [Comment savoir](https://emilieclary.github.io/sensdelamarche/comment-savoir/): les deux données à réunir, et ce qui n'est pas connaissable à la réservation
+- [Voiture 1](https://emilieclary.github.io/sensdelamarche/voiture-1/): ce qui est stable (l'extrémité de la rame) et ce qui ne l'est pas (le côté du quai)
+- [FAQ](https://emilieclary.github.io/sensdelamarche/faq/): questions fréquentes avec réponses directes
+- [À propos](https://emilieclary.github.io/sensdelamarche/a-propos/): méthodologie, sources et limites
 
 ## Données
 
-- [Sitemap XML](https://sensdelamarche.fr/sitemap.xml)
-- [Version complète pour LLM](https://sensdelamarche.fr/llms-full.txt)
+- [Sitemap XML](https://emilieclary.github.io/sensdelamarche/sitemap.xml)
+- [Version complète pour LLM](https://emilieclary.github.io/sensdelamarche/llms-full.txt)
 
 ## Code source
 
-- Open source sur GitHub: https://github.com/tonoid/sensdelamarche
-- Édité par tonoid.com, artisan micro-startup basé à Bordeaux.
+- Open source sur GitHub (fork): https://github.com/EmilieCLARY/sensdelamarche
+- Outil d'origine: https://github.com/tonoid/sensdelamarche (tonoid.com)
 
 ## Limitations connues
 
-- L'estimation est basée sur le schéma TGV Duplex standard; certaines rames Euroduplex, Atlantique ou Réseau peuvent varier.
+- Plans relevés: TGV Duplex 2N / Euroduplex, TGV Duplex 1re génération, OUIGO densifié. Les rames Océane, Atlantique/Réseau et TGV M ne sont pas encore relevées.
+- Sur les deux générations de Duplex, quatre places de la voiture 1 divergent (103, 110, 111, 112): l'outil répond alors «dépend du type de rame».
+- Les voitures 11 à 18 réutilisent le plan des voitures 1 à 8; cette symétrie n'a pas été vérifiée sur le terrain.
+- Les places latérales x45 et x46 des salles hautes OUIGO, la voiture bar et les places hors plan restent sans réponse.
 - Les trajets Intercités, TER et internationaux hors TGV ne sont pas couverts.
-- L'outil ne consulte pas en temps réel le plan de voiture SNCF; les données sont dérivées des schémas publics connus.
+- L'outil ne consulte pas en temps réel le plan de voiture SNCF.
 - Ce site est indépendant et n'est ni affilié ni parrainé par la SNCF, OUIGO ou TGV INOUI.

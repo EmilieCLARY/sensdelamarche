@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { DM_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { REPO_URL, SITE_URL } from "@/lib/site";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -10,7 +11,7 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-const SITE_URL = "https://sensdelamarche.fr";
+
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -90,7 +91,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     foundingDate: "2026",
     areaServed: "FR",
     knowsLanguage: ["fr"],
-    sameAs: ["https://github.com/tonoid/sensdelamarche", "https://tonoid.com"],
+    sameAs: [REPO_URL, "https://github.com/tonoid/sensdelamarche"],
   };
 
   return (

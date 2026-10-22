@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { estimate, parseSeat, seatFacesV1, predictV1End } from "./orientation.ts";
 import { AXES, findTrip } from "./tgv.ts";
 import { LAYOUTS } from "./layouts.ts";
-import type { TrainObservation } from "./observations.ts";
+import type { SeatObservation, TrainObservation } from "./observations.ts";
 
 const nord = AXES.find((a) => a.id === "paris-nord")!;
 const faces = (voiture: number, raw: number) =>
@@ -124,4 +124,84 @@ test("trajet non couvert", () => {
     { status: "trajet-inconnu" },
   );
   assert.equal(findTrip("Paris Nord", "Lille Europe")?.to, "b");
+});
+
+test("observations de train contradictoires : aucune prévision", () => {
+  const tie: TrainObservation[] = [
+    { train: "7099", date: "2026-10-01", axis: "paris-nord", v1End: "a" },
+    { train: "7099", date: "2026-10-02", axis: "paris-nord", v1End: "b" },
+  ];
+  const p = predictV1End(nord, "7099", tie);
+  assert.equal(p.v1End, null);
+  assert.equal(p.confidence, "aucune");
+  // Une observation unique reste exploitable, mais en confiance faible.
+  assert.equal(predictV1End(nord, "7099", tie.slice(0, 1)).v1End, "a");
+  assert.equal(predictV1End(nord, "7099", tie.slice(0, 1)).confidence, "faible");
+});
+
+test("confiance élevée : place observée deux fois et train bien observé", () => {
+  const seats: SeatObservation[] = [1, 2].map((i) => ({
+    service: "inoui",
+    voiture: 5,
+    seat: 4,
+    facesV1: false,
+    date: `2026-10-0${i}`,
+  }));
+  assert.equal(seatFacesV1("inoui", 5, parseSeat(504, 5)!, seats).confidence, "elevee");
+  const trains: TrainObservation[] = Array.from({ length: 5 }, (_, i) => ({
+    train: "7012",
+    date: `2026-10-0${i + 1}`,
+    axis: "paris-nord",
+    v1End: "a",
+  }));
+  const full = estimate(
+    { service: "inoui", voiture: 5, seatRaw: 504, dep: "Lille Europe", arr: "Paris Nord", train: "7012" },
+    { trains, seats },
+  );
+  assert.ok(full.status === "ok");
+  assert.equal(full.confidence, "elevee");
+  // Le plan seul plafonne à « moyenne », même avec un train parfaitement observé.
+  const planOnly = estimate(
+    { service: "inoui", voiture: 5, seatRaw: 504, dep: "Lille Europe", arr: "Paris Nord", train: "7012" },
+    { trains, seats: [] },
+  );
+  assert.ok(planOnly.status === "ok");
+  assert.equal(planOnly.confidence, "moyenne");
+});
+
+test("place couverte par un seul plan : la raison le dit", () => {
+  // 106 (place PMR) n'est pas relevée sur le plan 2N, seulement sur le plan 1re génération.
+  const pmr = seatFacesV1("inoui", 1, parseSeat(106, 1)!, []);
+  assert.equal(pmr.facesV1, false);
+  assert.match(pmr.reason, /ne relève pas cette place/);
+  assert.doesNotMatch(pmr.reason, /concordent/);
+  const v5 = seatFacesV1("inoui", 5, parseSeat(540, 5)!, []);
+  assert.equal(v5.facesV1, false);
+  assert.match(v5.reason, /ne relève pas cette place/);
+});
+
+test("rame 2 : la symétrie des voitures 11 à 18 est annoncée", () => {
+  const r2 = seatFacesV1("inoui", 12, parseSeat(252, 12)!, []);
+  const r1 = seatFacesV1("inoui", 2, parseSeat(252, 2)!, []);
+  assert.equal(r2.facesV1, r1.facesV1);
+  assert.match(r2.reason, /symétrie/);
+});
+
+test("plans INOUI : seules les places listées sont ambiguës", () => {
+  // Divergences relevées à la main entre le plan 2N (Seat61 2026) et le plan 1re génération.
+  const divergent: Record<number, number[]> = { 1: [3, 10, 11, 12], 5: [] };
+  const n2 = LAYOUTS.find((l) => l.id === "duplex-2n-euroduplex")!;
+  const g1 = LAYOUTS.find((l) => l.id === "duplex-1g")!;
+  for (const car of [1, 2, 3, 5, 6, 7, 8]) {
+    const a = n2.cars[car];
+    const b = g1.cars[car];
+    if (!a || !b) continue;
+    const common = [...new Set([...a.toward, ...a.away])].filter((s) =>
+      [...b.toward, ...b.away].includes(s),
+    );
+    const ambiguous = common
+      .filter((s) => seatFacesV1("inoui", car, parseSeat(car * 100 + s, car)!, []).facesV1 === null)
+      .sort((x, y) => x - y);
+    assert.deepEqual(ambiguous, (divergent[car] ?? []).sort((x, y) => x - y), `voiture ${car}`);
+  }
 });

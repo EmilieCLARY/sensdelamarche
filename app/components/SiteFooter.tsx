@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { REPO_URL } from "@/lib/site";
 
 export function SiteFooter() {
   return (
@@ -27,7 +28,7 @@ export function SiteFooter() {
               <li><Link href="/a-propos" className="hover:text-neutral-900">À propos</Link></li>
               <li>
                 <a
-                  href="https://github.com/tonoid/sensdelamarche"
+                  href={REPO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-neutral-900"
@@ -37,7 +38,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <a
-                  href="https://github.com/tonoid/sensdelamarche/issues/new"
+                  href={`${REPO_URL}/issues/new`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-neutral-900"
@@ -60,35 +61,29 @@ export function SiteFooter() {
         </div>
         <div className="mt-8 flex flex-col gap-4 border-t border-neutral-200 pt-6 md:flex-row md:items-end md:justify-between">
           <div className="text-center text-[12px] text-neutral-400 md:text-left">
-            © {new Date().getFullYear()} Sens de la marche · Estimation indicative basée sur le schéma TGV Duplex.
+            © {new Date().getFullYear()} Sens de la marche · Prévision indicative, fondée sur les
+            plans d&apos;aménagement relevés place par place. Non affilié à la SNCF.
           </div>
           <div className="flex flex-col items-center gap-1 text-center md:items-end md:text-right">
-            <p className="text-[14px] text-neutral-700">
-              Fait avec un{" "}
-              <a
-                className="text-[#E5007D] underline decoration-[#E5007D]/30 underline-offset-2 hover:decoration-[#E5007D]"
-                href="https://www.refurb.me/refurbished/macbook/macbook-pro/m4-pro"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                MacBook Pro M4 Pro reconditionné
-              </a>{" "}
-              à Bordeaux{" "}
-              <span aria-label="French flag" role="img">
-                🇫🇷
-              </span>
-            </p>
             <p className="text-[12px] text-neutral-400">
-              a{" "}
+              Outil d&apos;origine par{" "}
               <a
                 className="text-[#E5007D] underline decoration-[#E5007D]/30 underline-offset-2 hover:decoration-[#E5007D]"
                 href="https://tonoid.com"
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                tonoïd
-              </a>{" "}
-              microstartup © {new Date().getFullYear()}
+                tonoid.com
+              </a>
+              {" "}· fork et modèle de fiabilité maintenus sur{" "}
+              <a
+                className="text-[#E5007D] underline decoration-[#E5007D]/30 underline-offset-2 hover:decoration-[#E5007D]"
+                href={REPO_URL}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                GitHub
+              </a>
             </p>
           </div>
         </div>

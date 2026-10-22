@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
+import { REPO_URL, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "À propos : méthodologie et indépendance",
@@ -18,17 +19,17 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "AboutPage",
     name: "À propos de Sens de la marche",
-    url: "https://sensdelamarche.fr/a-propos",
+    url: `${SITE_URL}/a-propos`,
     inLanguage: "fr-FR",
     dateModified: UPDATED,
-    publisher: { "@id": "https://sensdelamarche.fr/#organization" },
+    publisher: { "@id": `${SITE_URL}/#organization` },
   };
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Accueil", item: "https://sensdelamarche.fr" },
-      { "@type": "ListItem", position: 2, name: "À propos", item: "https://sensdelamarche.fr/a-propos" },
+      { "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE_URL}` },
+      { "@type": "ListItem", position: 2, name: "À propos", item: `${SITE_URL}/a-propos` },
     ],
   };
 
@@ -135,15 +136,23 @@ export default function Page() {
             <p className="text-[15px] leading-relaxed text-neutral-700">
               Le code source est publié sur GitHub&nbsp;:{" "}
               <a
+                href={REPO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#E5007D] underline underline-offset-2 hover:text-[#6E1E78]"
+              >
+                {REPO_URL.replace("https://github.com/", "github.com/")}
+              </a>
+              . C&apos;est un fork de{" "}
+              <a
                 href="https://github.com/tonoid/sensdelamarche"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#E5007D] underline underline-offset-2 hover:text-[#6E1E78]"
               >
-                github.com/tonoid/sensdelamarche
+                sensdelamarche
               </a>
-              . Contributions, signalements de bugs et suggestions bienvenus via les issues du
-              dépôt. Le site est développé par{" "}
+              , créé par{" "}
               <a
                 href="https://tonoid.com"
                 target="_blank"
@@ -152,7 +161,10 @@ export default function Page() {
               >
                 tonoid.com
               </a>
-              , artisan micro-startup basé à Bordeaux.
+              &nbsp;: la reprise porte sur le modèle d&apos;orientation (plans relevés place par
+              place, observations terrain) et sur la suppression du script de mesure
+              d&apos;audience. Les signalements, les corrections de plans et les observations de
+              train passent par les issues de ce dépôt.
             </p>
           </section>
 
@@ -162,7 +174,7 @@ export default function Page() {
             </h2>
             <p className="text-[15px] leading-relaxed text-neutral-700">
               Le contenu textuel peut être cité librement avec attribution à{" "}
-              <strong>sensdelamarche.fr</strong>. Une version structurée lisible par les LLM
+              <strong>{SITE_URL.replace(/^https?:\/\//, "")}</strong>. Une version structurée lisible par les LLM
               est disponible à{" "}
               <a
                 href="/llms.txt"
