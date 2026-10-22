@@ -51,8 +51,8 @@ export default function Page() {
             <p className="text-[15px] leading-relaxed text-neutral-800">
               Sens de la marche est un projet indépendant qui propose un outil gratuit de
               vérification de l&apos;orientation des sièges TGV (INOUI et OUIGO, rames Duplex).
-              Le calcul est effectué localement dans le navigateur à partir de règles publiques
-              d&apos;alternance des sièges.
+              Le calcul est effectué localement dans le navigateur. C&apos;est une prévision, avec
+              un niveau de confiance affiché, pas une garantie.
             </p>
           </section>
 
@@ -69,18 +69,26 @@ export default function Page() {
           <section className="mb-10">
             <h2 className="mb-3 text-2xl font-bold tracking-tight text-neutral-900">Méthodologie</h2>
             <p className="mb-3 text-[15px] leading-relaxed text-neutral-700">
-              Le calcul applique trois règles publiques connues des schémas TGV Duplex&nbsp;:
+              Le résultat combine deux informations indépendantes&nbsp;:
             </p>
             <ol className="ml-5 list-decimal space-y-2 text-[15px] leading-relaxed text-neutral-700">
-              <li>Alternance des sièges par groupes de 4 en face-à-face tout au long de la voiture.</li>
-              <li>Inversion de l&apos;alternance entre voitures paires et voitures impaires.</li>
-              <li>Inversion de l&apos;alternance entre salle basse (places 1 à 39) et salle haute (places 40 et plus).</li>
+              <li>
+                <strong>L&apos;orientation de la place par rapport à la voiture 1.</strong> Elle vient
+                d&apos;observations terrain quand il y en a, sinon d&apos;un modèle non vérifié
+                (carrés alternés, inversés entre étages et entre voitures paires/impaires). Les
+                voitures de 1re classe INOUI et la voiture bar ne sont pas modélisées.
+              </li>
+              <li>
+                <strong>Le côté où se trouvera la voiture 1.</strong> Il vient des observations du
+                numéro de train quand il y en a, sinon de la convention supposée de l&apos;axe, dont
+                le niveau de preuve (hypothèse, témoignage, observé) est indiqué. Sur les axes
+                province-province, aucune convention n&apos;est connue.
+              </li>
             </ol>
             <p className="mt-3 text-[15px] leading-relaxed text-neutral-700">
-              Le sens de circulation est déduit de la table des axes TGV français. L&apos;outil
-              identifie l&apos;extrémité V1 (avant de la rame côté province) pour chaque trajet
-              reconnu, puis combine cette information avec la règle d&apos;alternance pour
-              produire l&apos;orientation finale.
+              L&apos;outil affiche aussi la réponse conditionnelle&nbsp;: «&nbsp;si la voiture 1 est
+              côté X, ta place est dans le sens de la marche&nbsp;». Le jour du départ, la
+              composition affichée sur le quai ou dans SNCF Connect permet de trancher.
             </p>
           </section>
 
@@ -89,10 +97,10 @@ export default function Page() {
               Précision et limitations
             </h2>
             <p className="text-[15px] leading-relaxed text-neutral-700">
-              L&apos;estimation est très fiable sur les rames TGV Duplex standard, qui
-              constituent la majorité des circulations INOUI et OUIGO. Les rames Euroduplex,
-              Atlantique ou Réseau peuvent présenter des variations mineures. En cas de doute,
-              le plan de voiture affiché sur le quai ou sur SNCF Connect fait foi. Les trajets
+              Au moment de la réservation, le sens réel de la rame n&apos;est connu de personne en
+              dehors de la SNCF, et il peut être inversé le jour même. La confiance affichée est
+              donc souvent faible tant que peu d&apos;observations ont été collectées. Le plan de
+              voiture affiché sur le quai ou sur SNCF Connect fait foi. Les trajets
               Intercités, TER et internationaux hors TGV ne sont pas couverts.
             </p>
           </section>

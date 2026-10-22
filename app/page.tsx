@@ -12,7 +12,7 @@ const FAQ = [
   },
   {
     q: "Le calcul est-il fiable à 100 % ?",
-    a: "Non, c'est une estimation basée sur le schéma TGV Duplex le plus courant (alternance par groupes de 4 sièges). Certaines rames ont une configuration différente. Vérifiez toujours le plan de voiture affiché sur le quai ou dans l'application SNCF Connect.",
+    a: "Non. Au moment de la réservation, personne ne connaît le sens réel de la rame : il peut être inversé. L'outil donne une prévision avec un niveau de confiance (souvent faible pour l'instant), et la réponse à appliquer le jour J selon le côté où se trouve la voiture 1. La prévision s'améliore avec les observations terrain.",
   },
   {
     q: "Ça marche pour OUIGO et TGV INOUI ?",
@@ -20,7 +20,7 @@ const FAQ = [
   },
   {
     q: "Et les places de 1ère classe ?",
-    a: "La règle d'alternance fonctionne pour les deux classes. Les voitures de 1ère (voiture 1 et 2 sur INOUI) sont traitées comme les autres.",
+    a: "Pas encore. En 1re classe INOUI (voitures 1 à 3 et 11 à 13), les rangées sont de 3 sièges et certaines rames ont des sièges pivotés au terminus : l'outil répond « impossible à prévoir » plutôt que d'inventer.",
   },
   {
     q: "Pourquoi certains trajets ne sont pas reconnus ?",

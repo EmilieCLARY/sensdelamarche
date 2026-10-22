@@ -57,51 +57,69 @@ const G = {
 
 export type Route = { a: string[]; b: string[] };
 
-export const ROUTES: Route[] = [
-  { a: [...G.paris_gdl, ...G.idf], b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med, ...G.alpes] },
-  { a: [...G.paris_montp, ...G.idf], b: [...G.bretagne, ...G.atlantic_w, ...G.atlantic_sw, ...G.sud_ouest] },
-  { a: [...G.paris_nord, ...G.idf], b: [...G.nord] },
-  { a: [...G.paris_est, ...G.idf], b: [...G.est] },
-  { a: [...G.nord], b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med] },
-  { a: [...G.nord], b: [...G.bretagne, ...G.atlantic_w, ...G.atlantic_sw, ...G.sud_ouest] },
-  { a: [...G.nord], b: [...G.est] },
-  { a: [...G.est], b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med] },
-  { a: [...G.atlantic_sw, ...G.sud_ouest], b: [...G.lyon, ...G.sud_est, ...G.med] },
-  { a: [...G.bretagne, ...G.atlantic_w], b: [...G.lyon, ...G.sud_est, ...G.med] },
-  { a: [...G.bretagne, ...G.atlantic_w], b: [...G.nord] },
-  { a: [...G.atlantic_sw], b: [...G.sud_ouest] },
-  { a: [...G.lyon], b: [...G.sud_est, ...G.med, ...G.alpes] },
-  { a: [...G.lyon], b: [...G.sud_ouest] },
-  { a: [...G.bourgogne], b: [...G.lyon, ...G.sud_est, ...G.med] },
-  { a: [...G.atlantic_w], b: [...G.atlantic_sw, ...G.sud_ouest] },
-  { a: [...G.bretagne], b: [...G.atlantic_sw, ...G.sud_ouest] },
-  { a: [...G.sud_ouest], b: [...G.sud_est, ...G.med] },
+/**
+ * Niveau de preuve du côté de la voiture 1 sur un axe.
+ * - "hypothese"  : repris de l'outil d'origine, aucune source.
+ * - "temoignage" : rapporté par des cheminots / passionnés, non officiel.
+ * - "observe"    : confirmé par des observations terrain (voir lib/observations.ts).
+ */
+export type EvidenceLevel = "hypothese" | "temoignage" | "observe";
+
+export type Axis = Route & {
+  id: string;
+  label: string;
+  /** Extrémité de l'axe où se trouve la voiture 1 selon la convention supposée, ou null si inconnue. */
+  v1End: "a" | "b" | null;
+  evidence: EvidenceLevel;
+  note: string;
+  source?: string;
+};
+
+const HYP = "Hypothèse reprise de l'outil d'origine (voiture 1 côté province), non sourcée.";
+
+export const AXES: Axis[] = [
+  {
+    id: "paris-sud-est",
+    label: "Paris Gare de Lyon ↔ Sud-Est",
+    a: [...G.paris_gdl, ...G.idf],
+    b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med, ...G.alpes],
+    v1End: "a",
+    evidence: "temoignage",
+    note:
+      "Témoignage (2011) : la 1re classe serait placée côté Paris sur l'axe Sud-Est, ce qui met la voiture 1 côté Paris. Contredit l'hypothèse de l'outil d'origine. Rame inversée « fréquemment » selon le même témoin.",
+    source: "https://www.cheminots.net/topic/26368-reservation-sens-de-la-marche/page/2/",
+  },
+  { id: "paris-atlantique", label: "Paris Montparnasse ↔ Atlantique / Sud-Ouest", a: [...G.paris_montp, ...G.idf], b: [...G.bretagne, ...G.atlantic_w, ...G.atlantic_sw, ...G.sud_ouest], v1End: "b", evidence: "hypothese", note: HYP },
+  { id: "paris-nord", label: "Paris Nord ↔ Nord", a: [...G.paris_nord, ...G.idf], b: [...G.nord], v1End: "b", evidence: "hypothese", note: HYP },
+  { id: "paris-est", label: "Paris Est ↔ Est", a: [...G.paris_est, ...G.idf], b: [...G.est], v1End: "b", evidence: "hypothese", note: HYP },
+  { id: "nord-sud-est", label: "Nord ↔ Sud-Est", a: [...G.nord], b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "nord-atlantique", label: "Nord ↔ Atlantique / Sud-Ouest", a: [...G.nord], b: [...G.bretagne, ...G.atlantic_w, ...G.atlantic_sw, ...G.sud_ouest], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "nord-est", label: "Nord ↔ Est", a: [...G.nord], b: [...G.est], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "est-sud-est", label: "Est ↔ Sud-Est", a: [...G.est], b: [...G.lyon, ...G.bourgogne, ...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "sud-ouest-sud-est", label: "Bordeaux / Sud-Ouest ↔ Sud-Est", a: [...G.atlantic_sw, ...G.sud_ouest], b: [...G.lyon, ...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "ouest-sud-est", label: "Bretagne / Pays de la Loire ↔ Sud-Est", a: [...G.bretagne, ...G.atlantic_w], b: [...G.lyon, ...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "ouest-nord", label: "Bretagne / Pays de la Loire ↔ Nord", a: [...G.bretagne, ...G.atlantic_w], b: [...G.nord], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "bordeaux-sud-ouest", label: "Bordeaux ↔ Sud-Ouest", a: [...G.atlantic_sw], b: [...G.sud_ouest], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "lyon-sud-est", label: "Lyon ↔ Sud-Est / Alpes", a: [...G.lyon], b: [...G.sud_est, ...G.med, ...G.alpes], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "lyon-sud-ouest", label: "Lyon ↔ Sud-Ouest", a: [...G.lyon], b: [...G.sud_ouest], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "bourgogne-sud-est", label: "Bourgogne ↔ Sud-Est", a: [...G.bourgogne], b: [...G.lyon, ...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "ouest-sud-ouest", label: "Pays de la Loire ↔ Bordeaux / Sud-Ouest", a: [...G.atlantic_w], b: [...G.atlantic_sw, ...G.sud_ouest], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "bretagne-sud-ouest", label: "Bretagne ↔ Bordeaux / Sud-Ouest", a: [...G.bretagne], b: [...G.atlantic_sw, ...G.sud_ouest], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
+  { id: "sud-ouest-med", label: "Sud-Ouest ↔ Méditerranée", a: [...G.sud_ouest], b: [...G.sud_est, ...G.med], v1End: null, evidence: "hypothese", note: "Axe province-province : aucune convention connue." },
 ];
 
-export type Direction = "a_to_b" | "b_to_a" | null;
+/** Conservé pour compatibilité (getParisStation). */
+export const ROUTES: Route[] = AXES;
 
-export function getDirection(dep: string, arr: string): Direction {
-  for (const route of ROUTES) {
-    if (route.a.includes(dep) && route.b.includes(arr)) return "a_to_b";
-    if (route.b.includes(dep) && route.a.includes(arr)) return "b_to_a";
+export type Trip = { axis: Axis; from: "a" | "b"; to: "a" | "b" };
+
+/** Identifie l'axe d'un trajet et le sens de parcours, ou null si non couvert. */
+export function findTrip(dep: string, arr: string): Trip | null {
+  for (const axis of AXES) {
+    if (axis.a.includes(dep) && axis.b.includes(arr)) return { axis, from: "a", to: "b" };
+    if (axis.b.includes(dep) && axis.a.includes(arr)) return { axis, from: "b", to: "a" };
   }
   return null;
-}
-
-export function getSeatOrientation(
-  seatNum: number,
-  voiture: number,
-  direction: Exclude<Direction, null>,
-): "forward" | "backward" {
-  const isUpper = seatNum >= 40;
-  const adjusted = isUpper ? seatNum - 40 : seatNum;
-  let facesV1 = Math.floor(adjusted / 4) % 2 === 0;
-  if (isUpper) facesV1 = !facesV1;
-  const ev = voiture > 10 ? voiture - 10 : voiture;
-  if (ev % 2 === 0) facesV1 = !facesV1;
-  return direction === "a_to_b"
-    ? (facesV1 ? "forward" : "backward")
-    : (facesV1 ? "backward" : "forward");
 }
 
 export const PARIS_STATIONS = [

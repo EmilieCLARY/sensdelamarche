@@ -23,7 +23,7 @@ const FAQ = [
   },
   {
     q: "Le résultat est-il fiable à 100 % ?",
-    a: "C'est une estimation basée sur le schéma TGV Duplex le plus courant. L'exactitude est élevée sur les rames Duplex standard, mais certaines rames (Euroduplex, Atlantique, Réseau) peuvent avoir des configurations légèrement différentes. Vérifiez toujours le plan de voiture affiché sur le quai ou sur SNCF Connect.",
+    a: "Non. Au moment de la réservation, personne ne connaît le sens réel de la rame : il peut être inversé. L'outil donne une prévision avec un niveau de confiance (souvent faible pour l'instant), et la réponse à appliquer le jour J selon le côté où se trouve la voiture 1. La prévision s'améliore avec les observations terrain.",
   },
   {
     q: "Pourquoi mon trajet n'est-il pas reconnu ?",
@@ -47,7 +47,7 @@ const FAQ = [
   },
   {
     q: "L'outil gère-t-il la 1ère classe ?",
-    a: "Oui. La 1ère classe utilise la même règle d'alternance que la 2nde. Seul le confort du fauteuil et l'espacement changent.",
+    a: "Pas encore. En 1re classe INOUI (voitures 1 à 3 et 11 à 13), les rangées sont de 3 sièges et certaines rames ont des sièges pivotés au terminus : l'outil répond « impossible à prévoir » plutôt que d'inventer.",
   },
   {
     q: "L'outil est-il gratuit ?",
