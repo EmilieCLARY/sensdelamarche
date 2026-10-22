@@ -15,7 +15,7 @@ const RANK: Record<Confidence, number> = { aucune: 0, faible: 1, moyenne: 2, ele
 const minConf = (a: Confidence, b: Confidence): Confidence => (RANK[a] <= RANK[b] ? a : b);
 
 export type ParsedSeat = {
-  /** Deux derniers chiffres de la place (0-99). */
+  /** Place sans le préfixe de voiture (258 en voiture 2 → 58 ; 904 en voiture 8 → 104). */
   seat: number;
   upper: boolean;
   /** Le numéro saisi était sur 3 chiffres. */
@@ -25,19 +25,22 @@ export type ParsedSeat = {
 };
 
 /**
- * Lit un numéro de place. Depuis décembre 2025, les TGV INOUI utilisent 3 chiffres :
+ * Lit un numéro de place. TGV INOUI (depuis décembre 2025) et OUIGO utilisent 3 chiffres :
  * le premier est le chiffre des unités de la voiture (place 58 en voiture 2 ou 12 → 258).
- * Places 0-39 en salle basse, 40 et plus en salle haute.
+ * Salle basse jusqu'à 39 sur INOUI, jusqu'à 40 sur OUIGO.
  */
-export function parseSeat(raw: number, voiture: number | null): ParsedSeat | null {
+export function parseSeat(raw: number, voiture: number | null, service: Service = "inoui"): ParsedSeat | null {
   if (!Number.isInteger(raw) || raw < 1 || raw > 999) return null;
   const threeDigits = raw >= 100;
-  const seat = threeDigits ? raw % 100 : raw;
+  let seat = threeDigits ? raw % 100 : raw;
   let warning: string | undefined;
-  if (threeDigits && voiture !== null && Math.floor(raw / 100) !== voiture % 10) {
-    warning = `Le préfixe ${Math.floor(raw / 100)} ne correspond pas à la voiture ${voiture} : vérifie ton billet.`;
+  if (threeDigits && voiture !== null) {
+    const prefix = Math.floor(raw / 100);
+    if (prefix === (voiture % 10) + 1 && raw % 100 < 10) seat = 100 + (raw % 100); // OUIGO voiture 8 : 900 à 904
+    else if (prefix !== voiture % 10) warning = `Le préfixe ${Math.floor(raw / 100)} ne correspond pas à la voiture ${voiture} : vérifie ton billet.`;
   }
-  return { seat, upper: seat >= 40, threeDigits, warning };
+  const upper = service === "ouigo" ? seat > 40 : seat >= 40;
+  return { seat, upper, threeDigits, warning };
 }
 
 type SeatFacing = { facesV1: boolean | null; confidence: Confidence; reason: string };
@@ -86,10 +89,7 @@ export function seatFacesV1(
     return {
       facesV1: null,
       confidence: "aucune",
-      reason:
-        service === "ouigo"
-          ? "Aucun plan d'aménagement OUIGO vérifié pour l'instant."
-          : "Cette place ne figure dans aucun plan d'aménagement vérifié.",
+      reason: "Cette place ne figure dans aucun plan d'aménagement vérifié.",
     };
   }
   const values = new Set(known.map((k) => k.v));
@@ -104,7 +104,7 @@ export function seatFacesV1(
   return {
     facesV1: known[0].v,
     confidence: "moyenne",
-    reason: `${known.length > 1 ? "Les plans concordent" : "Selon le plan"} (${labels}). Sur une rame d'un autre type (Océane, OUIGO, TGV M…), l'orientation peut différer.`,
+    reason: `${known.length > 1 ? "Les plans concordent" : "Selon le plan"} : ${labels}. Sur une rame d'un autre type (Océane, TGV M…), l'orientation peut différer.`,
   };
 }
 
@@ -174,7 +174,7 @@ export function estimate(
 ): Estimate {
   const trip = findTrip(input.dep, input.arr);
   if (!trip) return { status: "trajet-inconnu" };
-  const seat = parseSeat(input.seatRaw, input.voiture);
+  const seat = parseSeat(input.seatRaw, input.voiture, input.service);
   if (!seat) return { status: "place-invalide" };
 
   const reasons: string[] = [];

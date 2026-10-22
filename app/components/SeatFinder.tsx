@@ -211,7 +211,7 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
 
   const trip = useMemo(() => (dep && arr ? findTrip(dep, arr) : null), [dep, arr]);
 
-  const parsed = useMemo(() => parseSeat(parseInt(seatNum), sel), [seatNum, sel]);
+  const parsed = useMemo(() => parseSeat(parseInt(seatNum), sel, trainType), [seatNum, sel, trainType]);
   const eSeat = parsed?.seat ?? null;
   const upper = parsed?.upper ?? false;
 
@@ -473,9 +473,9 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
           </div>
           {est.ifV1Ahead && (
             <div style={{ fontSize: 13, color: "#444", lineHeight: 1.5 }}>
-              Le jour J, regarde où est la voiture 1 (afficheur du quai ou composition SNCF Connect) :
+              Le jour J, regarde où est la voiture {sel && sel > 10 ? 11 : 1} (afficheur du quai ou composition SNCF Connect) :
               <br />
-              voiture 1 côté <strong>{arr}</strong> →{" "}
+              voiture {sel && sel > 10 ? 11 : 1} côté <strong>{arr}</strong> →{" "}
               {est.ifV1Ahead === "forward" ? "sens de la marche" : "dos à la marche"} ; côté <strong>{dep}</strong> →{" "}
               {est.ifV1Ahead === "forward" ? "dos à la marche" : "sens de la marche"}.
             </div>
@@ -506,7 +506,7 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
         </p>
         <p style={{ fontSize: 12, color: "#888", margin: 0, lineHeight: 1.6 }}>
           L&apos;orientation de chaque place vient de plans d&apos;aménagement lus place par place (TGV
-          Duplex 2N, Euroduplex et Duplex 1re génération pour l&apos;instant). Le sens de la rame, lui, n&apos;est pas connu à la
+          Duplex 2N, Euroduplex, Duplex 1re génération et OUIGO pour l&apos;instant). Le sens de la rame, lui, n&apos;est pas connu à la
           réservation : il le devient avec les observations d&apos;un même numéro de train. Tu as pris ce
           train ? Indique où était la voiture 1 et dans quel sens était ta place.
         </p>

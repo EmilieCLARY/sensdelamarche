@@ -39,6 +39,7 @@ test("plan : chaque place n'est classée qu'une fois et les effectifs collent au
   const expected: Record<string, Record<number, number>> = {
     "duplex-2n-euroduplex": { 1: 60, 2: 60, 3: 60, 5: 76, 6: 80, 7: 80, 8: 92 },
     "duplex-1g": { 1: 62, 2: 60, 3: 60, 5: 78, 8: 92 },
+    "ouigo-duplex": { 1: 84, 2: 86, 3: 86, 5: 86, 6: 86, 7: 86, 8: 96 },
   };
   for (const l of LAYOUTS) {
     const counts = expected[l.id];
@@ -55,7 +56,27 @@ test("place hors plan, voiture bar, OUIGO : inconnu", () => {
   assert.equal(faces(1, 112), null);
   assert.equal(faces(1, 103), null);
   assert.equal(faces(4, 412), null);
-  assert.equal(seatFacesV1("ouigo", 5, parseSeat(504, 5)!, []).facesV1, null);
+});
+
+test("plan OUIGO : lecture des captures et numérotation", () => {
+  const o = (voiture: number, raw: number) =>
+    seatFacesV1("ouigo", voiture, parseSeat(raw, voiture, "ouigo")!, []).facesV1;
+  // Voiture 5 salle basse : 501-520 dos à la voiture 1, 521-540 vers la voiture 1 (carrés autour des tables).
+  assert.equal(o(5, 504), false);
+  assert.equal(o(5, 524), true);
+  // Voiture 8 salle haute : 900 dos, 904 vers la voiture 1 ; le préfixe 9 est accepté en voiture 8.
+  assert.equal(parseSeat(904, 8, "ouigo")?.seat, 104);
+  assert.equal(o(8, 900), false);
+  assert.equal(o(8, 904), true);
+  assert.equal(o(18, 904), true);
+  // Voiture 1 salle basse, places isolées.
+  assert.equal(o(1, 107), false);
+  assert.equal(o(1, 103), true);
+  // Places latérales exclues.
+  assert.equal(o(5, 545), null);
+  // OUIGO : 140 est en salle basse, INOUI : en salle haute.
+  assert.equal(parseSeat(140, 1, "ouigo")?.upper, false);
+  assert.equal(parseSeat(140, 1, "inoui")?.upper, true);
 });
 
 test("observation de place prioritaire sur le plan", () => {
