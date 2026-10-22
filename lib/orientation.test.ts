@@ -17,7 +17,7 @@ test("numéro 3 chiffres : préfixe retiré, salle détectée", () => {
   assert.equal(parseSeat(0, 2), null);
 });
 
-test("plan Duplex 1re génération : places lues sur le plan", () => {
+test("plans Duplex : places lues sur les plans", () => {
   // Voiture 5 salle basse : 500 dos à la voiture 1, 504 vers la voiture 1 (face à face autour du porte-bagages).
   assert.equal(faces(5, 500), false);
   assert.equal(faces(5, 504), true);
@@ -28,13 +28,20 @@ test("plan Duplex 1re génération : places lues sur le plan", () => {
   // 1re classe, voiture 1 : place isolée 100.
   assert.equal(faces(1, 100), true);
   assert.equal(faces(1, 179), false);
+  // Salle haute voiture 6 (numérotation Seat61) : 668 vers la voiture 1.
+  assert.equal(faces(6, 668), true);
+  assert.equal(faces(7, 760), false);
   // Rame 2 (voitures 11 à 18) : même plan.
   assert.equal(faces(15, 504), true);
 });
 
 test("plan : chaque place n'est classée qu'une fois et les effectifs collent au plan", () => {
-  const counts: Record<number, number> = { 1: 62, 2: 60, 3: 60, 5: 78, 7: 80, 8: 92 };
+  const expected: Record<string, Record<number, number>> = {
+    "duplex-2n-euroduplex": { 1: 60, 2: 60, 3: 60, 5: 76, 6: 80, 7: 80, 8: 92 },
+    "duplex-1g": { 1: 62, 2: 60, 3: 60, 5: 78, 8: 92 },
+  };
   for (const l of LAYOUTS) {
+    const counts = expected[l.id];
     for (const [car, c] of Object.entries(l.cars)) {
       const overlap = c.toward.filter((s) => c.away.includes(s));
       assert.deepEqual(overlap, [], `${l.id} voiture ${car}`);
@@ -44,7 +51,9 @@ test("plan : chaque place n'est classée qu'une fois et les effectifs collent au
 });
 
 test("place hors plan, voiture bar, OUIGO : inconnu", () => {
-  assert.equal(faces(6, 668), null); // numérotation douteuse dans le document
+  // Voiture 1 salle basse : les deux plans divergent, 103 aussi.
+  assert.equal(faces(1, 112), null);
+  assert.equal(faces(1, 103), null);
   assert.equal(faces(4, 412), null);
   assert.equal(seatFacesV1("ouigo", 5, parseSeat(504, 5)!, []).facesV1, null);
 });

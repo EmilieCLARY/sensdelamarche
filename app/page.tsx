@@ -20,7 +20,7 @@ const FAQ = [
   },
   {
     q: "Et les places de 1ère classe ?",
-    a: "Oui pour les TGV Duplex de 1re génération, dont le plan de 1re classe a été relevé. Sur les rames Océane, les sièges de 1re pivotent au terminus pour faire face au sens de la marche (sauf en bout de voiture).",
+    a: "Oui pour les TGV Duplex 2N, Euroduplex et Duplex 1re génération, dont les plans de 1re classe ont été relevés. Sur les rames Océane, les sièges de 1re pivotent au terminus pour faire face au sens de la marche (sauf en bout de voiture).",
   },
   {
     q: "Pourquoi certains trajets ne sont pas reconnus ?",

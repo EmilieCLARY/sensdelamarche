@@ -74,8 +74,8 @@ export default function Page() {
             <ol className="ml-5 list-decimal space-y-2 text-[15px] leading-relaxed text-neutral-700">
               <li>
                 <strong>L&apos;orientation de la place par rapport à la voiture 1.</strong> Elle vient
-                de plans d&apos;aménagement lus place par place (pour l&apos;instant le TGV Duplex de
-                1re génération, 1re et 2nde classe) et des observations terrain. Une place absente
+                de plans d&apos;aménagement lus place par place (pour l&apos;instant TGV Duplex 2N,
+                Euroduplex et Duplex 1re génération, 1re et 2nde classe) et des observations terrain. Une place absente
                 des plans donne «&nbsp;inconnu&nbsp;».
               </li>
               <li>

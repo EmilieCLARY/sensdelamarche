@@ -506,7 +506,7 @@ export default function SeatFinder({ defaultTrain = "ouigo", defaultDep = "", de
         </p>
         <p style={{ fontSize: 12, color: "#888", margin: 0, lineHeight: 1.6 }}>
           L&apos;orientation de chaque place vient de plans d&apos;aménagement lus place par place (TGV
-          Duplex 1re génération pour l&apos;instant). Le sens de la rame, lui, n&apos;est pas connu à la
+          Duplex 2N, Euroduplex et Duplex 1re génération pour l&apos;instant). Le sens de la rame, lui, n&apos;est pas connu à la
           réservation : il le devient avec les observations d&apos;un même numéro de train. Tu as pris ce
           train ? Indique où était la voiture 1 et dans quel sens était ta place.
         </p>

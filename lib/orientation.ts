@@ -104,7 +104,7 @@ export function seatFacesV1(
   return {
     facesV1: known[0].v,
     confidence: "moyenne",
-    reason: `Selon le plan du ${labels}. Si ta rame est d'un autre type (Euroduplex, Océane…), l'orientation peut différer.`,
+    reason: `${known.length > 1 ? "Les plans concordent" : "Selon le plan"} (${labels}). Sur une rame d'un autre type (Océane, OUIGO, TGV M…), l'orientation peut différer.`,
   };
 }
 
